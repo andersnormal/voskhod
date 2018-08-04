@@ -1,0 +1,11 @@
+{
+  "generator-create-go": {
+    "promptValues": {
+      "app": "voskhod",
+      "vendor": false,
+      "task": true,
+      "dep": true,
+      "cobra": true
+    }
+  }
+}
