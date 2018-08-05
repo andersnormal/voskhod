@@ -55,6 +55,12 @@
   version = "v1.2.0"
 
 [[projects]]
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  revision = "3e01752db0189b9157070a0e1668a620f9a85da2"
+  version = "v1.0.6"
+
+[[projects]]
   name = "github.com/spf13/afero"
   packages = [
     ".",
@@ -95,8 +101,17 @@
 
 [[projects]]
   branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["ssh/terminal"]
+  revision = "56440b844dfe139a8ac053f4ecac0b20b79058f4"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows"
+  ]
   revision = "0ffbfd41fbef8ffcf9b62b0b0aa3a5873ed7a4fe"
 
 [[projects]]
@@ -121,6 +136,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "79024c3d35c68aa3c86540372e0f702b5ce43d95db09adf2880ff8b5c1f78295"
+  inputs-digest = "175770ad8b4848c47b5c9bea00ebdda4d7e62746d47c4d8c332d545d6bbf0b5f"
   solver-name = "gps-cdcl"
   solver-version = 1
