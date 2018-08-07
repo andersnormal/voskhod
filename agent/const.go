@@ -18,19 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package main
+package agent
 
-import (
-	"math/rand"
-	"time"
-
-	"github.com/katallaxie/voskhod/cmd"
+const (
+	// VAgentStopSignal is the signal to stop the
+	VAgentStopSignal = 1
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
-func main() {
-	cmd.Execute()
-}

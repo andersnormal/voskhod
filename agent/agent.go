@@ -18,19 +18,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package main
+package agent
 
 import (
-	"math/rand"
-	"time"
-
-	"github.com/katallaxie/voskhod/cmd"
+	"context"
 )
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
+var _ Agent = (*VAgent)(nil)
+
+// New is returning a new agent
+func New() *VAgent {
+	return &VAgent{}
 }
 
-func main() {
-	cmd.Execute()
+// Start is starting the Agent
+func (a *VAgent) Start(ctx context.Context) error {
+	var err error
+
+	for {
+		select {
+		case <-ctx.Done():
+			return err
+		default:
+		}
+	}
 }

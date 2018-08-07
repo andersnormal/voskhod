@@ -18,19 +18,4 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package main
-
-import (
-	"math/rand"
-	"time"
-
-	"github.com/katallaxie/voskhod/cmd"
-)
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
-func main() {
-	cmd.Execute()
-}
+package agent

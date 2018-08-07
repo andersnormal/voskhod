@@ -18,19 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package main
+package agent
 
 import (
-	"math/rand"
-	"time"
+	"context"
 
-	"github.com/katallaxie/voskhod/cmd"
+	"github.com/katallaxie/voskhod/config"
 )
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
+// VAgentSignal is the channel to control the Voskhod Agent
+type VAgentSignal int
+
+// Agent describes the interface to a Voskhod Agent
+type Agent interface {
+	Start(ctx context.Context) error
 }
 
-func main() {
-	cmd.Execute()
+// VAgent describes an instance of a Voskhod Agent
+type VAgent struct {
+	cfg *config.Config
 }
