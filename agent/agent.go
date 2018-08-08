@@ -22,6 +22,7 @@ package agent
 
 import (
 	"context"
+	"fmt"
 )
 
 var _ Agent = (*VAgent)(nil)
@@ -38,6 +39,7 @@ func (a *VAgent) Start(ctx context.Context) error {
 	for {
 		select {
 		case <-ctx.Done():
+			fmt.Print("killed context")
 			return err
 		default:
 		}
