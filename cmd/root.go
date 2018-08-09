@@ -21,21 +21,17 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
 
-	"github.com/katallaxie/voskhod/agent"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"golang.org/x/sync/errgroup"
 )
 
-var cfgFile string
-var signals = make(chan os.Signal, 1)
+var (
+	cfgFile string
+)
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -44,26 +40,7 @@ var RootCmd = &cobra.Command{
 	Long:  `Not yet`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		root, cancel := context.WithCancel(context.Background())
-
-		configSignals()
-		go watchSignals(cancel)
-
-		g, ctx := errgroup.WithContext(root)
-
-		agent := agent.New()
-
-		g.Go(func() error {
-			err := agent.Start(ctx)
-
-			return err
-		})
-
-		if err := g.Wait(); err != nil {
-			fmt.Println(err)
-		}
-	},
+	RunE: runE,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -111,24 +88,5 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
-}
-
-func configSignals() {
-	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
-}
-
-// watchSignals is watching configured signals
-func watchSignals(cancel context.CancelFunc) {
-	fmt.Print("Test")
-	for {
-		sig := <-signals
-		switch sig {
-		case syscall.SIGUSR1:
-			fmt.Print("user signal")
-		default:
-			fmt.Print("Shutting gracefully down")
-			cancel()
-		}
 	}
 }
