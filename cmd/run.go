@@ -27,11 +27,16 @@ import (
 	"github.com/katallaxie/voskhod/agent"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func runE(cmd *cobra.Command, args []string) error {
 	var err error
 	var root = new(root)
+
+	// init logger
+	root.logger = log.WithFields(log.Fields{})
 
 	// create sys channel
 	root.sys = make(chan os.Signal, 1)
@@ -41,14 +46,17 @@ func runE(cmd *cobra.Command, args []string) error {
 	root.ctx, root.cancel = context.WithCancel(context.Background())
 
 	// watch syscalls and cancel upon need
-	go root.watchSignals()
+	go root.watchSignals(cfg)
 
 	// create errgroup
 	g, ctx := errgroup.WithContext(root.ctx)
 
+	// log
+	root.logger.Info("Starting Agent ...")
+
 	// create agent and start
-	agent := agent.New()
-	g.Go(agent.Start(ctx))
+	agent := agent.New(ctx, cfg)
+	g.Go(agent.Start())
 
 	// wait for errors
 	err = g.Wait()

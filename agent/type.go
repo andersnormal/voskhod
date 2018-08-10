@@ -22,6 +22,7 @@ package agent
 
 import (
 	"context"
+	"sync"
 
 	"github.com/katallaxie/voskhod/config"
 )
@@ -31,10 +32,15 @@ type VAgentSignal int
 
 // Agent describes the interface to a Voskhod Agent
 type Agent interface {
-	Start(ctx context.Context) func() error
+	Start() func() error
 }
 
 // VAgent describes an instance of a Voskhod Agent
 type VAgent struct {
 	cfg *config.Config
+
+	// lock is used to safely access the client
+	lock sync.RWMutex
+
+	ctx context.Context
 }

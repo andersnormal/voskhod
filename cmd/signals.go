@@ -24,12 +24,14 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/katallaxie/voskhod/config"
 )
 
-func (r *root) configureSignals() {
+func (r *root) configureSignals(cfg *config.Config) {
 	r.sys = make(chan os.Signal, 1)
 
-	signal.Notify(r.sys, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
+	signal.Notify(r.sys, cfg.ReloadSignal, cfg.KillSignal, cfg.TermSignal)
 }
 
 func (r *root) exitSignal() {
@@ -37,12 +39,12 @@ func (r *root) exitSignal() {
 }
 
 // watchSignals is watching configured signals
-func (r *root) watchSignals() {
+func (r *root) watchSignals(cfg *config.Config) {
 	// defer
 	defer r.exitSignal()
 
 	// config singals
-	r.configureSignals()
+	r.configureSignals(cfg)
 
 	// loop blocking
 	for {

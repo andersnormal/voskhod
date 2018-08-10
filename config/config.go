@@ -37,6 +37,9 @@ const (
 	// DefaultLogLevel is the default logging level.
 	DefaultLogLevel = log.WarnLevel
 
+	// DefaultTermSignal is the signal to term the agent.
+	DefaultTermSignal = syscall.SIGTERM
+
 	// DefaultReloadSignal is the default signal for reload.
 	DefaultReloadSignal = syscall.SIGHUP
 
@@ -51,18 +54,15 @@ const (
 )
 
 // New returns a new Config
-func New() (*Config, error) {
-	var err error
-
-	c := &Config{
+func New() *Config {
+	return &Config{
 		Verbose:               DefaultVerbose,
 		LogLevel:              DefaultLogLevel,
 		ReloadSignal:          DefaultReloadSignal,
+		TermSignal:            DefaultTermSignal,
 		KillSignal:            DefaultKillSignal,
 		Timeout:               DefaultTimeout,
 		DockerReservedPort:    DefaultDockerReservedPort,
 		DockerReservedSSLPort: DefaultDockerReservedSSLPort,
 	}
-
-	return c, err
 }

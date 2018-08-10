@@ -22,23 +22,28 @@ package agent
 
 import (
 	"context"
+
+	"github.com/katallaxie/voskhod/config"
 )
 
 var _ Agent = (*VAgent)(nil)
 
 // New is returning a new agent
-func New() *VAgent {
-	return &VAgent{}
+func New(ctx context.Context, cfg *config.Config) *VAgent {
+	return &VAgent{
+		cfg: cfg,
+		ctx: ctx,
+	}
 }
 
 // Start is starting the Agent
-func (a *VAgent) Start(ctx context.Context) func() error {
+func (a *VAgent) Start() func() error {
 	return func() error {
 		var err error
 
 		for {
 			select {
-			case <-ctx.Done():
+			case <-a.ctx.Done():
 				return err
 			default:
 			}

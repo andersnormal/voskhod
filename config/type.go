@@ -38,6 +38,9 @@ type Config struct {
 	// ReloadSignal
 	ReloadSignal syscall.Signal
 
+	// TermSignal
+	TermSignal syscall.Signal
+
 	// KillSignal
 	KillSignal syscall.Signal
 
