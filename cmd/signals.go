@@ -21,7 +21,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -33,19 +32,26 @@ func (r *root) configureSignals() {
 	signal.Notify(r.sys, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
 }
 
+func (r *root) exitSignal() {
+	r.exit <- 1
+}
+
 // watchSignals is watching configured signals
 func (r *root) watchSignals() {
+	// defer
+	defer r.exitSignal()
+
 	// config singals
 	r.configureSignals()
 
+	// loop blocking
 	for {
 		sig := <-r.sys
 		switch sig {
 		case syscall.SIGUSR1:
-			fmt.Print("user signal")
 		default:
-			fmt.Print("Shutting gracefully down")
 			r.cancel()
+			return
 		}
 	}
 }

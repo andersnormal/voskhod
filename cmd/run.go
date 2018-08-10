@@ -43,19 +43,19 @@ func runE(cmd *cobra.Command, args []string) error {
 	// watch syscalls and cancel upon need
 	go root.watchSignals()
 
+	// create errgroup
 	g, ctx := errgroup.WithContext(root.ctx)
 
+	// create agent and start
 	agent := agent.New()
+	g.Go(agent.Start(ctx))
 
-	g.Go(func() error {
-		err := agent.Start(ctx)
+	// wait for errors
+	err = g.Wait()
 
-		return err
-	})
+	// again, wait exit
+	<-root.exit
 
-	if err = g.Wait(); err != nil {
-		return err
-	}
-
+	// noop
 	return err
 }

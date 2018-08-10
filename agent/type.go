@@ -31,7 +31,7 @@ type VAgentSignal int
 
 // Agent describes the interface to a Voskhod Agent
 type Agent interface {
-	Start(ctx context.Context) error
+	Start(ctx context.Context) func() error
 }
 
 // VAgent describes an instance of a Voskhod Agent
