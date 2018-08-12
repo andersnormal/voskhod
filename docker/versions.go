@@ -18,44 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package cmd
+package docker
 
-import (
-	"os"
-	"os/signal"
-	"syscall"
+// APIVersion represents a Docker API version
+type APIVersion string
 
-	"github.com/katallaxie/voskhod/config"
+// APIVersions represents the supported API versions
+type APIVersions []APIVersion
+
+const (
+	// Version1_38 represents Docker API 1.38
+	Version1_38 APIVersion = "1.38"
 )
 
-func (r *root) configureSignals(cfg *config.Config) {
-	r.sys = make(chan os.Signal, 1)
-
-	signal.Notify(r.sys, cfg.ReloadSignal, cfg.KillSignal, cfg.TermSignal)
-}
-
-func (r *root) exitSignal() {
-	r.exit <- 1
-}
-
-// watchSignals is watching configured signals
-func (r *root) watchSignals(cfg *config.Config) {
-	// defer
-	defer r.exitSignal()
-
-	// config singals
-	r.configureSignals(cfg)
-
-	// loop blocking
-	for {
-		sig := <-r.sys
-		switch sig {
-		case syscall.SIGUSR1:
-		default:
-			r.logger.Info("Gracefully shutdown ...")
-
-			r.cancel()
-			return
-		}
+// SupportedVersions returns all the supported Docker API versions.
+// All unknown API versions are ignored.
+func SupportedVersions() APIVersions {
+	return []APIVersion{
+		Version1_38,
 	}
 }
