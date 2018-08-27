@@ -22,24 +22,42 @@ package agent
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/katallaxie/voskhod/config"
+	"github.com/katallaxie/voskhod/docker/dockerapi"
 )
 
-var _ Agent = (*VAgent)(nil)
+var _ Agent = (*agent)(nil)
 
 // New is returning a new agent
-func New(ctx context.Context, cfg *config.Config) *VAgent {
-	return &VAgent{
+func New(ctx context.Context, cfg *config.Config) Agent {
+	return &agent{
 		cfg: cfg,
 		ctx: ctx,
 	}
 }
 
 // Start is starting the Agent
-func (a *VAgent) Start() func() error {
+func (a *agent) Start() func() error {
 	return func() error {
 		var err error
+
+		// connect docker client
+		dc, err := dockerclient.New()
+		if err != nil {
+			return err
+		}
+
+		a.dc = dc
+
+		version, err := a.dc.Version(a.ctx, 10*time.Minute)
+		if err != nil {
+			return nil
+		}
+
+		fmt.Println(version)
 
 		for {
 			select {

@@ -18,30 +18,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package agent
+package dockerclient
 
 import (
 	"context"
 	"sync"
+	"time"
 
-	"github.com/katallaxie/voskhod/config"
-	"github.com/katallaxie/voskhod/docker/dockerapi"
+	"github.com/docker/docker/api/types"
+	dc "github.com/docker/docker/client"
+	"github.com/katallaxie/voskhod/docker/dockeriface"
 )
 
-// Signal is the channel to control the Voskhod Agent
-type Signal int
+var _ dockeriface.Client = (*client)(nil)
+var _ Client = (*client)(nil)
 
-// Agent describes the interface to a Voskhod Agent
-type Agent interface {
-	Start() func() error
+// Client is the interface
+type Client interface {
+	dockeriface.Client
 }
 
-type agent struct {
-	cfg *config.Config
-	ctx context.Context
+type client struct {
+	_timeOnce sync.Once
+	lock      sync.Mutex
+	dc        *dc.Client
+}
 
-	dc dockerclient.Client
+// New creates a new docker client
+func New() (Client, error) {
+	var err error
+	var c = new(client)
 
-	// lock is used to safely access the client
-	lock sync.RWMutex
+	c.dc, err = dc.NewEnvClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return c, err
+}
+
+func (c *client) Version(ctx context.Context, time time.Duration) (types.Version, error) {
+	ctx, cancel := context.WithTimeout(ctx, time)
+	defer cancel()
+
+	return c.dc.ServerVersion(ctx)
 }

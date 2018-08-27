@@ -18,30 +18,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package agent
+package dockeriface
 
 import (
 	"context"
-	"sync"
+	"time"
 
-	"github.com/katallaxie/voskhod/config"
-	"github.com/katallaxie/voskhod/docker/dockerapi"
+	"github.com/docker/docker/api/types"
 )
 
-// Signal is the channel to control the Voskhod Agent
-type Signal int
-
-// Agent describes the interface to a Voskhod Agent
-type Agent interface {
-	Start() func() error
-}
-
-type agent struct {
-	cfg *config.Config
-	ctx context.Context
-
-	dc dockerclient.Client
-
-	// lock is used to safely access the client
-	lock sync.RWMutex
+// Client interface to implement tests
+type Client interface {
+	// Version returns the version of the Docker daemon.
+	Version(context.Context, time.Duration) (types.Version, error)
 }
