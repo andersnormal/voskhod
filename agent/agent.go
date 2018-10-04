@@ -23,10 +23,11 @@ package agent
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/katallaxie/voskhod/config"
 	"github.com/katallaxie/voskhod/docker/dockerapi"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var _ Agent = (*agent)(nil)
@@ -39,8 +40,11 @@ func New(ctx context.Context, cfg *config.Config) Agent {
 	}
 }
 
-// Start is starting the Agent
+// Start is starting the agent
 func (a *agent) Start() func() error {
+	// set custom logger for the agent itself
+	a.logger = log.WithFields(log.Fields{})
+
 	return func() error {
 		var err error
 
@@ -50,22 +54,27 @@ func (a *agent) Start() func() error {
 			return err
 		}
 
-		a.dc = dc
+		a.dc = dc // assign the client to the agent
 
-		version, err := a.dc.Version(a.ctx, 10*time.Minute)
-		if err != nil {
-			fmt.Println(err)
-			return nil
-		}
+		// init hearbeat for docker client,
+		// because we do not know if the client still live
 
-		fmt.Println(version)
+		a.logger.Infof(fmt.Sprintf("Agent succesfully started ..."))
 
-		for {
-			select {
-			case <-a.ctx.Done():
-				return err
-			default:
-			}
-		}
+		// just have one channel to end it,\
+		// so not using something differne
+		<-a.ctx.Done()
+
+		// cleanup
+		err = a.Stop()
+
+		// noop
+		return err
 	}
+}
+
+// Stop is actually stopping the agent and tearing down everything.
+// Cleaning up the mess.
+func (a *agent) Stop() error {
+	return a.dc.Stop() // nothing more right now
 }

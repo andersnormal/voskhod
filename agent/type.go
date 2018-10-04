@@ -26,6 +26,8 @@ import (
 
 	"github.com/katallaxie/voskhod/config"
 	"github.com/katallaxie/voskhod/docker/dockerapi"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Signal is the channel to control the Voskhod Agent
@@ -33,7 +35,10 @@ type Signal int
 
 // Agent describes the interface to a Voskhod Agent
 type Agent interface {
+	// Start does all things necessary to start an agent
 	Start() func() error
+	// Stop is doing all things necessary to nicely stop an agent
+	Stop() error
 }
 
 type agent struct {
@@ -41,6 +46,8 @@ type agent struct {
 	ctx context.Context
 
 	dc dockerclient.Client
+
+	logger *log.Entry
 
 	// lock is used to safely access the client
 	lock sync.RWMutex

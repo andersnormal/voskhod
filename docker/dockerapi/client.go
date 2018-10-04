@@ -101,9 +101,15 @@ func CheckRedirect(req *http.Request, via []*http.Request) error {
 	return ErrRedirect
 }
 
-func (c *client) Version(ctx context.Context, time time.Duration) (types.Version, error) {
+// Version is returning the version of the Docker API and engine available
+func (c *client) Version(ctx context.Context, time time.Duration) (version types.Version, err error) {
 	ctx, cancel := context.WithTimeout(ctx, time)
 	defer cancel()
 
 	return c.dc.ServerVersion(ctx)
+}
+
+// Stop is stopping the Docker API client
+func (c *client) Stop() (err error) {
+	return c.dc.Close()
 }

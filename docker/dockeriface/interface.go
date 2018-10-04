@@ -30,5 +30,8 @@ import (
 // Client interface to implement tests
 type Client interface {
 	// Version returns the version of the Docker daemon.
-	Version(context.Context, time.Duration) (types.Version, error)
+	Version(context.Context, time.Duration) (version types.Version, err error)
+
+	// Stop is stopping the client
+	Stop() (err error)
 }

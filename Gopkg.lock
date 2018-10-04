@@ -74,8 +74,7 @@
   version = "v1.4.7"
 
 [[projects]]
-  branch = "master"
-  digest = "1:a361611b8c8c75a1091f00027767f7779b29cb37c456a71b8f2604c88057ab40"
+  digest = "1:c0d19ab64b32ce9fe5cf4ddceba78d5bc9807f0016db6b1183599da3dcc24d10"
   name = "github.com/hashicorp/hcl"
   packages = [
     ".",
@@ -90,7 +89,8 @@
     "json/token",
   ]
   pruneopts = "UT"
-  revision = "ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  revision = "8cb6e5b959231cc1119e43259c4a608f9c51a241"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
@@ -101,6 +101,14 @@
   version = "v1.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:f44d34fda864bed6d6c71514cd40b2ee097e6e67f745d5d014113e1faa5af8b7"
+  name = "github.com/konsorten/go-windows-terminal-sequences"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b729f2633dfe35f4d1d8a32385f6685610ce1cb5"
+
+[[projects]]
   digest = "1:c568d7727aa262c32bdf8a3f7db83614f7af0ed661474b24588de635c20024c7"
   name = "github.com/magiconair/properties"
   packages = ["."]
@@ -109,20 +117,12 @@
   version = "v1.8.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:5ab79470a1d0fb19b041a624415612f8236b3c06070161a910562f2b2d064355"
+  digest = "1:e32dfc6abff6a3633ef4d9a1022fd707c8ef26f1e1e8f855dc58dc415ce7c8f3"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f15292f7a699fcc1a38a80977f80a046874ba8ac"
-
-[[projects]]
-  digest = "1:bd7c3d7cd11c644f5afdb1ca562131a581dfa154ead27a123faaaa04a5eab7e9"
-  name = "github.com/moby/moby"
-  packages = ["api/types"]
-  pruneopts = "UT"
-  revision = "092cba3727bb9b4a2f0e922cd6c0f93ea270e363"
-  version = "v1.13.1"
+  revision = "fe40af7a9c397fa3ddba203c38a5042c5d0475ad"
+  version = "v1.1.1"
 
 [[projects]]
   digest = "1:95741de3af260a92cc5c7f3f3061e85273f5a81b5db20d4bd68da74bd521675e"
@@ -141,23 +141,23 @@
   version = "v0.8.0"
 
 [[projects]]
-  digest = "1:d867dfa6751c8d7a435821ad3b736310c2ed68945d05b50fb9d23aee0540c8cc"
+  digest = "1:dc2d85c13ac22c22a1f3170a41a8e1b897fa05134aaf533f16df44f66a25b4a1"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   pruneopts = "UT"
-  revision = "3e01752db0189b9157070a0e1668a620f9a85da2"
-  version = "v1.0.6"
+  revision = "a67f783a3814b8729bd2dac5780b5f78f8dbd64d"
+  version = "v1.1.0"
 
 [[projects]]
-  digest = "1:bd1ae00087d17c5a748660b8e89e1043e1e5479d0fea743352cda2f8dd8c4f84"
+  digest = "1:6a4a11ba764a56d2758899ec6f3848d24698d48442ebce85ee7a3f63284526cd"
   name = "github.com/spf13/afero"
   packages = [
     ".",
     "mem",
   ]
   pruneopts = "UT"
-  revision = "787d034dfe70e44075ccc060d346146ef53270ad"
-  version = "v1.1.1"
+  revision = "d40851caa0d747393da1ffb28f7f9d8b4eeffebd"
+  version = "v1.1.2"
 
 [[projects]]
   digest = "1:516e71bed754268937f57d4ecb190e01958452336fa73dbac880894164e91c1f"
@@ -176,28 +176,28 @@
   version = "v0.0.3"
 
 [[projects]]
-  branch = "master"
-  digest = "1:080e5f630945ad754f4b920e60b4d3095ba0237ebf88dc462eb28002932e3805"
+  digest = "1:68ea4e23713989dc20b1bded5d9da2c5f9be14ff9885beef481848edd18c26cb"
   name = "github.com/spf13/jwalterweatherman"
   packages = ["."]
   pruneopts = "UT"
-  revision = "7c0cea34c8ece3fbeb2b27ab9b59511d360fb394"
+  revision = "4a4406e478ca629068e7768fc33f3f044173c0a6"
+  version = "v1.0.0"
 
 [[projects]]
-  digest = "1:9424f440bba8f7508b69414634aef3b2b3a877e522d8a4624692412805407bb7"
+  digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
   name = "github.com/spf13/pflag"
   packages = ["."]
   pruneopts = "UT"
-  revision = "583c0c0531f06d5278b7d917446061adc344b5cd"
-  version = "v1.0.1"
+  revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
+  version = "v1.0.3"
 
 [[projects]]
-  digest = "1:59e7dceb53b4a1e57eb1eb0bf9951ff0c25912df7660004a789b62b4e8cdca3b"
+  digest = "1:214775c11fd26da94a100111a62daa25339198a4f9c57cb4aab352da889f5b93"
   name = "github.com/spf13/viper"
   packages = ["."]
   pruneopts = "UT"
-  revision = "b5e8006cbee93ec955a89ab31e0e3ce3204f3736"
-  version = "v1.0.2"
+  revision = "2c12c60302a5a0e62ee102ca9bc996277c2f64f5"
+  version = "v1.2.1"
 
 [[projects]]
   branch = "master"
@@ -205,11 +205,11 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "56440b844dfe139a8ac053f4ecac0b20b79058f4"
+  revision = "e3636079e1a4c1f337f212cc5cd2aca108f6c900"
 
 [[projects]]
   branch = "master"
-  digest = "1:58cb5fbdf85e1f468c749aa31773ff102866831106f52762b2823ae235ca11e7"
+  digest = "1:d9f9f45d3383b93ce1c7e744b3ede6974917ae4d100e1a7abfc2906e5e5e2e28"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -218,7 +218,7 @@
     "proxy",
   ]
   pruneopts = "UT"
-  revision = "f9ce57c11b242f0f1599cf25c89d8cb02c45295a"
+  revision = "f5e5bdd778241bfefa8627f7124c39cd6ad8d74f"
 
 [[projects]]
   branch = "master"
@@ -230,14 +230,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:bdd70b95d2f0faaad6d9e259aad84738c6bdeb8f45245be6487e88df45f5a0f1"
+  digest = "1:8375ca24f586acd7b9a0ec8c6f24a6706a3ffa3dd7a80fd0e6e51caba139408f"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "0ffbfd41fbef8ffcf9b62b0b0aa3a5873ed7a4fe"
+  revision = "af653ce8b74f808d092db8ca9741fbb63d2a469d"
 
 [[projects]]
   digest = "1:8029e9743749d4be5bc9f7d42ea1659471767860f0cdc34d37c3111bd308a295"
@@ -268,7 +268,7 @@
   input-imports = [
     "github.com/docker/docker/api/types",
     "github.com/docker/docker/client",
-    "github.com/moby/moby/api/types",
+    "github.com/docker/go-connections/sockets",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
