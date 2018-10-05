@@ -23,7 +23,7 @@ package cmd
 import (
 	"time"
 
-	"github.com/katallaxie/voskhod/config"
+	"github.com/katallaxie/voskhod/agent/config"
 	"github.com/spf13/cobra"
 )
 

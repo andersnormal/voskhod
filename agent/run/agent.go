@@ -25,10 +25,10 @@ import (
 	"fmt"
 
 	"github.com/docker/docker/api/types/events"
-	"github.com/katallaxie/voskhod/config"
-	"github.com/katallaxie/voskhod/docker/dockerapi"
-	e "github.com/katallaxie/voskhod/docker/events"
-	"github.com/katallaxie/voskhod/docker/events/status"
+	"github.com/katallaxie/voskhod/agent/config"
+	"github.com/katallaxie/voskhod/agent/docker/dockerapi"
+	e "github.com/katallaxie/voskhod/agent/docker/events"
+	"github.com/katallaxie/voskhod/agent/docker/events/status"
 
 	log "github.com/sirupsen/logrus"
 )

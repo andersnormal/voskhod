@@ -21,41 +21,49 @@
 package cmd
 
 import (
+	"context"
 	"os"
-	"os/signal"
-	"syscall"
 
-	"github.com/katallaxie/voskhod/config"
+	agent "github.com/katallaxie/voskhod/agent/run"
+	"github.com/spf13/cobra"
+	"golang.org/x/sync/errgroup"
+
+	log "github.com/sirupsen/logrus"
 )
 
-func (r *root) configureSignals(cfg *config.Config) {
-	r.sys = make(chan os.Signal, 1)
+func runE(cmd *cobra.Command, args []string) error {
+	var err error
+	var root = new(root)
 
-	signal.Notify(r.sys, cfg.ReloadSignal, cfg.KillSignal, cfg.TermSignal)
-}
+	// init logger
+	root.logger = log.WithFields(log.Fields{})
 
-func (r *root) exitSignal() {
-	r.exit <- 1
-}
+	// create sys channel
+	root.sys = make(chan os.Signal, 1)
+	root.exit = make(chan int, 1)
 
-// watchSignals is watching configured signals
-func (r *root) watchSignals(cfg *config.Config) {
-	// defer
-	defer r.exitSignal()
+	// create root context
+	root.ctx, root.cancel = context.WithCancel(context.Background())
 
-	// config singals
-	r.configureSignals(cfg)
+	// watch syscalls and cancel upon need
+	go root.watchSignals(cfg)
 
-	// loop blocking
-	for {
-		sig := <-r.sys
-		switch sig {
-		case syscall.SIGUSR1:
-		default:
-			r.logger.Info("Gracefully shutdown ...")
+	// create errgroup
+	g, ctx := errgroup.WithContext(root.ctx)
 
-			r.cancel()
-			return
-		}
-	}
+	// log
+	root.logger.Info("Starting Agent ...")
+
+	// create agent and start
+	agent := agent.New(ctx, cfg)
+	g.Go(agent.Start())
+
+	// wait for errors
+	err = g.Wait()
+
+	// again, wait exit
+	<-root.exit
+
+	// noop
+	return err
 }

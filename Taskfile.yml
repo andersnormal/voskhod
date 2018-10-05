@@ -58,16 +58,16 @@ tasks:
       - task: test
       - task: lint
 
-  build:
+  build:agent:
     desc: Run all the go tests.
     sources:
-      - ./*.go
+      - ./agent/*.go
     generates:
       - bin/*.{{exeExt}}
     cmds:
       - echo "Building ({{.Dir}}) ..."
       - mkdir -p bin
-      - gox -output {{printf "bin/{{.Dir}}_{{.OS}}_{{.Arch}}"}} -os="linux" -os="darwin" -arch="386" -arch="amd64" ./
+      - gox -output {{printf "bin/{{.Dir}}_{{.OS}}_{{.Arch}}"}} -os="linux" -os="darwin" -arch="386" -arch="amd64" ./agent
       - go build -i -o bin/{{.Dir}}
 
   docker:

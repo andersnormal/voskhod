@@ -24,7 +24,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/katallaxie/voskhod/cmd"
+	"github.com/katallaxie/voskhod/agent/cmd"
 )
 
 func init() {
