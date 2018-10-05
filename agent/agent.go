@@ -24,9 +24,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/docker/docker/api/types/events"
 	"github.com/katallaxie/voskhod/config"
 	"github.com/katallaxie/voskhod/docker/dockerapi"
-	"github.com/katallaxie/voskhod/docker/events"
+	e "github.com/katallaxie/voskhod/docker/events"
+	"github.com/katallaxie/voskhod/docker/events/status"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -56,15 +58,17 @@ func (a *agent) Start() func() error {
 		}
 
 		a.dc = dc // assign the client to the agent
-		a.events = events.New(dc.ContainerEvents(a.ctx))
+		a.events = e.New(dc.ContainerEvents(a.ctx))
 
-		l := make(chan interface{})
+		// generating a event listener channel
+		l := make(chan events.Message)
 		a.events.AddEventListener(l)
 
+		// go to func to golem
 		go func() {
 			for {
 				msg := <-l
-				fmt.Printf("%v", msg)
+				a.handleMessage(msg) // handle the event message, and translate to our events
 			}
 		}()
 
@@ -89,4 +93,13 @@ func (a *agent) Start() func() error {
 // Cleaning up the mess.
 func (a *agent) Stop() error {
 	return a.dc.Stop() // nothing more right now
+}
+
+func (a *agent) handleMessage(msg events.Message) {
+	switch msg.Status {
+	case status.ContainerCreated:
+		// we have created a container, go to notify server
+		fmt.Println("Container created")
+	default: // noop just drop
+	}
 }

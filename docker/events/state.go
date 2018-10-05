@@ -22,7 +22,6 @@ package events
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 	"time"
 
@@ -34,8 +33,8 @@ const (
 )
 
 type Events interface {
-	AddEventListener(listener chan<- interface{}) error
-	RemoveEventListener(listener chan<- interface{}) error
+	AddEventListener(listener chan<- events.Message) error
+	RemoveEventListener(listener chan<- events.Message) error
 }
 
 type eventsState struct {
@@ -43,7 +42,7 @@ type eventsState struct {
 	sync.WaitGroup
 	MessagesC <-chan events.Message // has to be changed to type
 	ErrC      <-chan error
-	listeners []chan<- interface{}
+	listeners []chan<- events.Message
 	watch     bool
 }
 
@@ -84,12 +83,12 @@ var (
 )
 
 // AddEventListener is adding an event listener to the event state
-func (e *eventsState) AddEventListener(listener chan<- interface{}) error {
+func (e *eventsState) AddEventListener(listener chan<- events.Message) error {
 	return e.addListener(listener)
 }
 
 // RemoveEventListener removes a listener from the monitor.
-func (e *eventsState) RemoveEventListener(listener chan<- interface{}) error {
+func (e *eventsState) RemoveEventListener(listener chan<- events.Message) error {
 	return e.removeListener(listener)
 }
 
@@ -101,7 +100,7 @@ func New(messageC <-chan events.Message, errC <-chan error) Events {
 	}
 }
 
-func (e *eventsState) addListener(listener chan<- interface{}) error {
+func (e *eventsState) addListener(listener chan<- events.Message) error {
 	var err error
 
 	e.Lock()
@@ -120,7 +119,7 @@ func (e *eventsState) addListener(listener chan<- interface{}) error {
 	return err
 }
 
-func (e *eventsState) removeListener(listener chan<- interface{}) error {
+func (e *eventsState) removeListener(listener chan<- events.Message) error {
 	var err error
 
 	e.Lock()
@@ -130,7 +129,7 @@ func (e *eventsState) removeListener(listener chan<- interface{}) error {
 		return ErrListenerDoesNotExists
 	}
 
-	var newListeners []chan<- interface{}
+	var newListeners []chan<- events.Message
 	for _, l := range e.listeners {
 		if l != listener {
 			newListeners = append(newListeners, l)
@@ -141,7 +140,7 @@ func (e *eventsState) removeListener(listener chan<- interface{}) error {
 	return err
 }
 
-func (e *eventsState) listenerExists(a chan<- interface{}) bool {
+func (e *eventsState) listenerExists(a chan<- events.Message) bool {
 	for _, b := range e.listeners {
 		if b == a {
 			return true
@@ -210,6 +209,7 @@ func (e *eventsState) broadcastEvent(event events.Message) {
 	}
 
 	for _, listener := range e.listeners {
+		// should then be buffer
 		select {
 		case listener <- event:
 		default:
