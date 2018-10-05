@@ -26,6 +26,7 @@ import (
 
 	"github.com/katallaxie/voskhod/config"
 	"github.com/katallaxie/voskhod/docker/dockerapi"
+	"github.com/katallaxie/voskhod/docker/events"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -49,12 +50,23 @@ func (a *agent) Start() func() error {
 		var err error
 
 		// connect docker client
-		dc, err := dockerclient.New()
+		dc, err := dockerclient.New("1.25")
 		if err != nil {
 			return err
 		}
 
 		a.dc = dc // assign the client to the agent
+		a.events = events.New(dc.ContainerEvents(a.ctx))
+
+		l := make(chan interface{})
+		a.events.AddEventListener(l)
+
+		go func() {
+			for {
+				msg := <-l
+				fmt.Printf("%v", msg)
+			}
+		}()
 
 		// init hearbeat for docker client,
 		// because we do not know if the client still live

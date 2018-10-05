@@ -20,21 +20,20 @@
 
 package docker
 
-// APIVersion represents a Docker API version
-type APIVersion string
-
 // APIVersions represents the supported API versions
-type APIVersions []APIVersion
+type APIVersions []string
 
 const (
 	// Version1_38 represents Docker API 1.38
-	Version1_38 APIVersion = "1.38"
+	Version1_38 string = "1.38"
+	Version1_37 string = "1.37"
 )
 
 // SupportedVersions returns all the supported Docker API versions.
 // All unknown API versions are ignored.
 func SupportedVersions() APIVersions {
-	return []APIVersion{
+	return []string{
 		Version1_38,
+		Version1_37,
 	}
 }

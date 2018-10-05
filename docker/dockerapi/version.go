@@ -18,40 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package agent
+package dockerclient
 
 import (
-	"context"
-	"sync"
-
-	"github.com/katallaxie/voskhod/config"
-	"github.com/katallaxie/voskhod/docker/dockerapi"
-	"github.com/katallaxie/voskhod/docker/events"
-
-	log "github.com/sirupsen/logrus"
+	"github.com/katallaxie/voskhod/docker"
 )
 
-// Signal is the channel to control the Voskhod Agent
-type Signal int
+func FindSupportedAPIVersions() docker.APIVersions {
+	var supportedVersions docker.APIVersions
+	for _, testVersion := range docker.SupportedVersions() {
+		if _, err := New(testVersion); err != nil {
+			continue
+		}
+		supportedVersions = append(supportedVersions, testVersion)
+	}
 
-// Agent describes the interface to a Voskhod Agent
-type Agent interface {
-	// Start does all things necessary to start an agent
-	Start() func() error
-	// Stop is doing all things necessary to nicely stop an agent
-	Stop() error
-}
-
-type agent struct {
-	cfg *config.Config
-	ctx context.Context
-
-	dc dockerclient.Client
-
-	events events.Events
-
-	logger *log.Entry
-
-	// lock is used to safely access the client
-	lock sync.RWMutex
+	return supportedVersions
 }

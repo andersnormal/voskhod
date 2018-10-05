@@ -24,6 +24,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/docker/docker/api/types/events"
 	"net/http"
 	"sync"
 	"time"
@@ -52,7 +53,7 @@ type client struct {
 }
 
 // New creates a new docker client
-func New() (Client, error) {
+func New(version string) (Client, error) {
 	var err error
 	var client = new(client)
 
@@ -61,7 +62,7 @@ func New() (Client, error) {
 		return nil, err
 	}
 
-	client.dc, err = dc.NewClient(DefaultDockerHost, "1.25", httpClient, nil)
+	client.dc, err = dc.NewClient(DefaultDockerHost, version, httpClient, nil)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -99,6 +100,33 @@ func CheckRedirect(req *http.Request, via []*http.Request) error {
 		return http.ErrUseLastResponse
 	}
 	return ErrRedirect
+}
+
+// ListContainers is listing the containers on the Daemon
+func (c *client) ListContainers(ctx context.Context, timeout time.Duration, all bool) dockeriface.ListContainersResponse {
+	ctx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	containers, err := c.dc.ContainerList(ctx, types.ContainerListOptions{
+		All: all,
+	})
+	if err != nil {
+		return dockeriface.ListContainersResponse{Error: err}
+	}
+
+	// We get an empty slice if there are no containers to be listed.
+	// Extract container IDs from this list.
+	containerIDs := make([]string, len(containers))
+	for i, container := range containers {
+		containerIDs[i] = container.ID
+	}
+
+	return dockeriface.ListContainersResponse{DockerIDs: containerIDs, Error: nil}
+}
+
+// ContainerEvents returns channels to the Docker API container events
+func (c *client) ContainerEvents(ctx context.Context) (<-chan events.Message, <-chan error) {
+	return c.dc.Events(ctx, types.EventsOptions{})
 }
 
 // Version is returning the version of the Docker API and engine available
