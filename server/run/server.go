@@ -22,9 +22,13 @@ package server
 
 import (
 	"context"
+	"net"
 
 	"github.com/katallaxie/voskhod/server/config"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
+	pb "github.com/katallaxie/voskhod/proto"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -45,6 +49,19 @@ func (s *server) Start() func() error {
 
 	return func() error {
 		var err error
+
+		lis, err := net.Listen("tcp", ":50051")
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		s := grpc.NewServer()
+		pb.RegisterVoskhodServer(s, &server{})
+
+		// Register reflection service on gRPC server.
+		reflection.Register(s)
+		if err := s.Serve(lis); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
 
 		// a.dc = dc // assign the client to the agent
 		// a.events = e.New(dc.ContainerEvents(a.ctx))
@@ -83,4 +100,8 @@ func (s *server) Start() func() error {
 func (s *server) Stop() error {
 	var err error
 	return err
+}
+
+func (s *server) CreateTask(ctx context.Context, in *pb.CreateTaskRequest) (*pb.CreateTaskResponse, error) {
+	return &pb.CreateTaskResponse{Task: &pb.Task{Uuid: "test"}}, nil
 }
