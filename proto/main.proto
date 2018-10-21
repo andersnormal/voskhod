@@ -2,54 +2,18 @@ syntax = "proto3";
 
 package proto;
 
-service LetsEncryptCerts {
-  rpc CreateCertificate (CreateCertificateRequest) returns (CreateCertificateResponse);
-  rpc ShowCertificate (ShowCertificateRequest) returns (ShowCertificateResponse);
-  rpc DeleteCertificate (DeleteCertificateRequest) returns (DeleteCertificateResponse);
-  rpc CreateDNSARecords (CreateDNSARecordsRequest) returns (CreateDNSARecordsResponse);
+service Voskhod {
+  rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse);
 }
 
-message Certificate {
-  enum Status {
-    AUTHORIZING = 0;
-    READY = 1;
-    ERROR = 2;
-  }
-
+message Task {
   string uuid = 1;
-  repeated string dns_names = 2;
-  uint64 owner_id = 3;
-  Status status = 4;
 }
 
-message CreateCertificateRequest {
-  Certificate certificate = 1;
+message CreateTaskRequest {
+  Task task = 1;
 }
 
-message CreateCertificateResponse {
-  Certificate certificate = 1;
-}
-
-message ShowCertificateRequest {
-  Certificate certificate = 1;
-}
-
-message ShowCertificateResponse {
-  Certificate certificate = 1;
-}
-
-message DeleteCertificateRequest {
-  Certificate certificate = 1;
-  bool scrub_data = 2;
-}
-
-message DeleteCertificateResponse {
-}
-
-message CreateDNSARecordsRequest {
-  repeated Certificate certificates = 1;
-  string load_balancer_ip = 2;
-}
-
-message CreateDNSARecordsResponse {
+message CreateTaskResponse {
+  Task task = 1;
 }
