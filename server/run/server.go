@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package agent
+package server
 
 import (
 	"context"
@@ -33,7 +33,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var _ Agent = (*agent)(nil)
+var _ Server = (*agent)(nil)
 
 // New is returning a new agent
 func New(ctx context.Context, cfg *config.Config) Agent {

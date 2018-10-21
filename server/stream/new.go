@@ -17,51 +17,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-package config
+package stream
 
 import (
-	"syscall"
-	"time"
+	"context"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/katallaxie/voskhod/server/config"
 )
 
-// Config contains a configuration for Voskhod
-type Config struct {
-	// Verbose toggles the verbosity
-	Verbose bool
+const (
+	defaultNatsHTTPPort = 8223
+	defaultNatsPort     = 4223
+)
 
-	// LogLevel is the level with with to log for this config
-	LogLevel log.Level
+// New returns a new Stream
+func New(ctx context.Context, cfg *config.Config) *Stream {
+	var s = new(Stream)
 
-	// ReloadSignal
-	ReloadSignal syscall.Signal
+	s.ctx = ctx
+	s.cfg = cfg
 
-	// TermSignal
-	TermSignal syscall.Signal
-
-	// KillSignal
-	KillSignal syscall.Signal
-
-	// Timeout of the runtime
-	Timeout time.Duration
-
-	// DockerReservedPort of engine port
-	DockerReservedPort int
-
-	// DockerReservedSSLPort is the default SSL port for the Docker engine
-	DockerReservedSSLPort int
-
-	// NatsReadyTimeout is the timeout to wait for NATS to become ready
-	NatsReadyTimeout time.Duration
-
-	// NatsFilestoreDir is the directory to persit NATS messages
-	NatsFilestoreDir string
-
-	// NatsHTTPPort is the http port that NATS is listening on
-	NatsHTTPPort int
-
-	// NatsPort is the port NATS is listing on
-	NatsPort int
+	return s
 }

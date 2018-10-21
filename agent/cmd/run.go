@@ -25,6 +25,7 @@ import (
 	"os"
 
 	agent "github.com/katallaxie/voskhod/agent/run"
+	"github.com/katallaxie/voskhod/agent/stream"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 
@@ -34,6 +35,10 @@ import (
 func runE(cmd *cobra.Command, args []string) error {
 	var err error
 	var root = new(root)
+
+	// ready
+	ready := make(chan bool)
+	defer close(ready)
 
 	// init logger
 	root.logger = log.WithFields(log.Fields{})
@@ -50,6 +55,13 @@ func runE(cmd *cobra.Command, args []string) error {
 
 	// create errgroup
 	g, ctx := errgroup.WithContext(root.ctx)
+
+	// create agent and start
+	stream := stream.New(ctx, cfg)
+	g.Go(stream.Start(ready))
+
+	// wait for the next
+	<-ready
 
 	// log
 	root.logger.Info("Starting Agent ...")

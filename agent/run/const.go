@@ -19,8 +19,3 @@
 // THE SOFTWARE.
 
 package agent
-
-const (
-	// VAgentStopSignal is the signal to stop the
-	VAgentStopSignal = 1
-)

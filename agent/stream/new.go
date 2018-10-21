@@ -17,10 +17,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+package stream
 
-package agent
+import (
+	"context"
 
-const (
-	// VAgentStopSignal is the signal to stop the
-	VAgentStopSignal = 1
+	"github.com/katallaxie/voskhod/agent/config"
 )
+
+// New returns a new Stream
+func New(ctx context.Context, cfg *config.Config) *Stream {
+	var s = new(Stream)
+
+	s.ctx = ctx
+	s.cfg = cfg
+
+	return s
+}

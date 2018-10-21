@@ -51,18 +51,6 @@ const (
 
 	// DefaultTimeout is the default time to configure the runtime
 	DefaultTimeout = 60
-
-	// DefaultNatsReadyTimeout is the default timeout to wait for NATS to become ready
-	DefaultNatsReadyTimeout = 10
-
-	// DefaultsNatsFilestoreDir is the default directory to persit NATS messages
-	DefaultNatsFilestoreDir = "data"
-
-	// DefaultNatsHTTPPort is the default http port NATS listen on
-	DefaultNatsHTTPPort = 8223
-
-	// DefaultNatsPort is the default port is listening on
-	DefaultNatsPort = 4223
 )
 
 // New returns a new Config
@@ -76,9 +64,5 @@ func New() *Config {
 		Timeout:               DefaultTimeout,
 		DockerReservedPort:    DefaultDockerReservedPort,
 		DockerReservedSSLPort: DefaultDockerReservedSSLPort,
-		NatsFilestoreDir:      DefaultNatsFilestoreDir,
-		NatsReadyTimeout:      DefaultNatsReadyTimeout,
-		NatsPort:              DefaultNatsPort,
-		NatsHTTPPort:          DefaultNatsHTTPPort,
 	}
 }
