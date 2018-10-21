@@ -22,67 +22,56 @@ package server
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/docker/docker/api/types/events"
-	"github.com/katallaxie/voskhod/agent/config"
-	"github.com/katallaxie/voskhod/agent/docker/dockerapi"
-	e "github.com/katallaxie/voskhod/agent/docker/events"
-	"github.com/katallaxie/voskhod/agent/docker/events/status"
+	"github.com/katallaxie/voskhod/server/config"
 
 	log "github.com/sirupsen/logrus"
 )
 
-var _ Server = (*agent)(nil)
+var _ Server = (*server)(nil)
 
 // New is returning a new agent
-func New(ctx context.Context, cfg *config.Config) Agent {
-	return &agent{
+func New(ctx context.Context, cfg *config.Config) Server {
+	return &server{
 		cfg: cfg,
 		ctx: ctx,
 	}
 }
 
 // Start is starting the agent
-func (a *agent) Start() func() error {
+func (s *server) Start() func() error {
 	// set custom logger for the agent itself
-	a.logger = log.WithFields(log.Fields{})
+	s.logger = log.WithFields(log.Fields{})
 
 	return func() error {
 		var err error
 
-		// connect docker client
-		dc, err := dockerclient.New("1.25")
-		if err != nil {
-			return err
-		}
+		// a.dc = dc // assign the client to the agent
+		// a.events = e.New(dc.ContainerEvents(a.ctx))
 
-		a.dc = dc // assign the client to the agent
-		a.events = e.New(dc.ContainerEvents(a.ctx))
+		// // generating a event listener channel
+		// l := make(chan events.Message)
+		// a.events.AddEventListener(l)
 
-		// generating a event listener channel
-		l := make(chan events.Message)
-		a.events.AddEventListener(l)
-
-		// go to func to golem
-		go func() {
-			for {
-				msg := <-l
-				a.handleMessage(msg) // handle the event message, and translate to our events
-			}
-		}()
+		// // go to func to golem
+		// go func() {
+		// 	for {
+		// 		msg := <-l
+		// 		a.handleMessage(msg) // handle the event message, and translate to our events
+		// 	}
+		// }()
 
 		// init hearbeat for docker client,
 		// because we do not know if the client still live
 
-		a.logger.Infof(fmt.Sprintf("Agent succesfully started ..."))
+		// a.logger.Infof(fmt.Sprintf("Agent succesfully started ..."))
 
-		// just have one channel to end it,\
-		// so not using something differne
-		<-a.ctx.Done()
+		// // just have one channel to end it,\
+		// // so not using something differne
+		// <-a.ctx.Done()
 
 		// cleanup
-		err = a.Stop()
+		// err = a.Stop()
 
 		// noop
 		return err
@@ -91,15 +80,7 @@ func (a *agent) Start() func() error {
 
 // Stop is actually stopping the agent and tearing down everything.
 // Cleaning up the mess.
-func (a *agent) Stop() error {
-	return a.dc.Stop() // nothing more right now
-}
-
-func (a *agent) handleMessage(msg events.Message) {
-	switch msg.Status {
-	case status.ContainerCreated:
-		// we have created a container, go to notify server
-		fmt.Println("Container created")
-	default: // noop just drop
-	}
+func (s *server) Stop() error {
+	var err error
+	return err
 }
