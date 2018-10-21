@@ -19,12 +19,3 @@
 // THE SOFTWARE.
 
 package config
-
-import (
-	"github.com/katallaxie/voskhod/config"
-)
-
-// Config contains a configuration for the agent
-type Config struct {
-	*config.Config
-}
