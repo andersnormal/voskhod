@@ -25,25 +25,33 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type Task struct {
-	Uuid                 string   `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+// Cluster is representing a set of agents with resources
+//
+// A cluster is a logical collection of agents.
+type Cluster struct {
+	// The unique identifier of a cluster.
+	// It has to be unique to cluster resources accordingly,
+	// and transport offers and ACKs.
+	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	// The canonical name of a cluster.
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Task) Reset()         { *m = Task{} }
-func (m *Task) String() string { return proto.CompactTextString(m) }
-func (*Task) ProtoMessage()    {}
-func (*Task) Descriptor() ([]byte, []int) {
-	return fileDescriptor_main_bac18eb8b6bc6694, []int{0}
+func (m *Cluster) Reset()         { *m = Cluster{} }
+func (m *Cluster) String() string { return proto.CompactTextString(m) }
+func (*Cluster) ProtoMessage()    {}
+func (*Cluster) Descriptor() ([]byte, []int) {
+	return fileDescriptor_main_75965fec24b48c52, []int{0}
 }
-func (m *Task) XXX_Unmarshal(b []byte) error {
+func (m *Cluster) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *Task) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *Cluster) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_Task.Marshal(b, m, deterministic)
+		return xxx_messageInfo_Cluster.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalTo(b)
@@ -53,44 +61,59 @@ func (m *Task) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (dst *Task) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Task.Merge(dst, src)
+func (dst *Cluster) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Cluster.Merge(dst, src)
 }
-func (m *Task) XXX_Size() int {
+func (m *Cluster) XXX_Size() int {
 	return m.Size()
 }
-func (m *Task) XXX_DiscardUnknown() {
-	xxx_messageInfo_Task.DiscardUnknown(m)
+func (m *Cluster) XXX_DiscardUnknown() {
+	xxx_messageInfo_Cluster.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Task proto.InternalMessageInfo
+var xxx_messageInfo_Cluster proto.InternalMessageInfo
 
-func (m *Task) GetUuid() string {
+func (m *Cluster) GetUuid() string {
 	if m != nil {
 		return m.Uuid
 	}
 	return ""
 }
 
-type CreateTaskRequest struct {
-	Task                 *Task    `protobuf:"bytes,1,opt,name=task" json:"task,omitempty"`
+func (m *Cluster) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+// Agent is representing an agent to scheduler
+//
+// This is the identification of an agent to the scheduler.
+// It contains all the information about an agent.
+type Agent struct {
+	// Unique id of the agent.
+	// Which is either generated or provided.
+	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	// A canonical name for the agent.
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CreateTaskRequest) Reset()         { *m = CreateTaskRequest{} }
-func (m *CreateTaskRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateTaskRequest) ProtoMessage()    {}
-func (*CreateTaskRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_main_bac18eb8b6bc6694, []int{1}
+func (m *Agent) Reset()         { *m = Agent{} }
+func (m *Agent) String() string { return proto.CompactTextString(m) }
+func (*Agent) ProtoMessage()    {}
+func (*Agent) Descriptor() ([]byte, []int) {
+	return fileDescriptor_main_75965fec24b48c52, []int{1}
 }
-func (m *CreateTaskRequest) XXX_Unmarshal(b []byte) error {
+func (m *Agent) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *CreateTaskRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *Agent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_CreateTaskRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_Agent.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalTo(b)
@@ -100,44 +123,102 @@ func (m *CreateTaskRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return b[:n], nil
 	}
 }
-func (dst *CreateTaskRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateTaskRequest.Merge(dst, src)
+func (dst *Agent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Agent.Merge(dst, src)
 }
-func (m *CreateTaskRequest) XXX_Size() int {
+func (m *Agent) XXX_Size() int {
 	return m.Size()
 }
-func (m *CreateTaskRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateTaskRequest.DiscardUnknown(m)
+func (m *Agent) XXX_DiscardUnknown() {
+	xxx_messageInfo_Agent.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CreateTaskRequest proto.InternalMessageInfo
+var xxx_messageInfo_Agent proto.InternalMessageInfo
 
-func (m *CreateTaskRequest) GetTask() *Task {
+func (m *Agent) GetUuid() string {
 	if m != nil {
-		return m.Task
+		return m.Uuid
+	}
+	return ""
+}
+
+func (m *Agent) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+// Request message for RegisterAgent
+type RegisterAgentRequest struct {
+	// The agent which wants to register.
+	Agent                *Agent   `protobuf:"bytes,1,opt,name=agent" json:"agent,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RegisterAgentRequest) Reset()         { *m = RegisterAgentRequest{} }
+func (m *RegisterAgentRequest) String() string { return proto.CompactTextString(m) }
+func (*RegisterAgentRequest) ProtoMessage()    {}
+func (*RegisterAgentRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_main_75965fec24b48c52, []int{2}
+}
+func (m *RegisterAgentRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RegisterAgentRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RegisterAgentRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *RegisterAgentRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegisterAgentRequest.Merge(dst, src)
+}
+func (m *RegisterAgentRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *RegisterAgentRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegisterAgentRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RegisterAgentRequest proto.InternalMessageInfo
+
+func (m *RegisterAgentRequest) GetAgent() *Agent {
+	if m != nil {
+		return m.Agent
 	}
 	return nil
 }
 
-type CreateTaskResponse struct {
-	Task                 *Task    `protobuf:"bytes,1,opt,name=task" json:"task,omitempty"`
+// Response message for RegisterAgent
+type RegisterAgentResponse struct {
+	// The cluster the agent is register to.
+	Cluster              *Cluster `protobuf:"bytes,1,opt,name=cluster" json:"cluster,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CreateTaskResponse) Reset()         { *m = CreateTaskResponse{} }
-func (m *CreateTaskResponse) String() string { return proto.CompactTextString(m) }
-func (*CreateTaskResponse) ProtoMessage()    {}
-func (*CreateTaskResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_main_bac18eb8b6bc6694, []int{2}
+func (m *RegisterAgentResponse) Reset()         { *m = RegisterAgentResponse{} }
+func (m *RegisterAgentResponse) String() string { return proto.CompactTextString(m) }
+func (*RegisterAgentResponse) ProtoMessage()    {}
+func (*RegisterAgentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_main_75965fec24b48c52, []int{3}
 }
-func (m *CreateTaskResponse) XXX_Unmarshal(b []byte) error {
+func (m *RegisterAgentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *CreateTaskResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *RegisterAgentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_CreateTaskResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_RegisterAgentResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalTo(b)
@@ -147,29 +228,30 @@ func (m *CreateTaskResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (dst *CreateTaskResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateTaskResponse.Merge(dst, src)
+func (dst *RegisterAgentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RegisterAgentResponse.Merge(dst, src)
 }
-func (m *CreateTaskResponse) XXX_Size() int {
+func (m *RegisterAgentResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *CreateTaskResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateTaskResponse.DiscardUnknown(m)
+func (m *RegisterAgentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RegisterAgentResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CreateTaskResponse proto.InternalMessageInfo
+var xxx_messageInfo_RegisterAgentResponse proto.InternalMessageInfo
 
-func (m *CreateTaskResponse) GetTask() *Task {
+func (m *RegisterAgentResponse) GetCluster() *Cluster {
 	if m != nil {
-		return m.Task
+		return m.Cluster
 	}
 	return nil
 }
 
 func init() {
-	proto.RegisterType((*Task)(nil), "proto.Task")
-	proto.RegisterType((*CreateTaskRequest)(nil), "proto.CreateTaskRequest")
-	proto.RegisterType((*CreateTaskResponse)(nil), "proto.CreateTaskResponse")
+	proto.RegisterType((*Cluster)(nil), "proto.Cluster")
+	proto.RegisterType((*Agent)(nil), "proto.Agent")
+	proto.RegisterType((*RegisterAgentRequest)(nil), "proto.RegisterAgentRequest")
+	proto.RegisterType((*RegisterAgentResponse)(nil), "proto.RegisterAgentResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -184,7 +266,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type VoskhodClient interface {
-	CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error)
+	RegisterAgent(ctx context.Context, in *RegisterAgentRequest, opts ...grpc.CallOption) (*RegisterAgentResponse, error)
 }
 
 type voskhodClient struct {
@@ -195,9 +277,9 @@ func NewVoskhodClient(cc *grpc.ClientConn) VoskhodClient {
 	return &voskhodClient{cc}
 }
 
-func (c *voskhodClient) CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error) {
-	out := new(CreateTaskResponse)
-	err := c.cc.Invoke(ctx, "/proto.Voskhod/CreateTask", in, out, opts...)
+func (c *voskhodClient) RegisterAgent(ctx context.Context, in *RegisterAgentRequest, opts ...grpc.CallOption) (*RegisterAgentResponse, error) {
+	out := new(RegisterAgentResponse)
+	err := c.cc.Invoke(ctx, "/proto.Voskhod/RegisterAgent", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -206,27 +288,27 @@ func (c *voskhodClient) CreateTask(ctx context.Context, in *CreateTaskRequest, o
 
 // VoskhodServer is the server API for Voskhod service.
 type VoskhodServer interface {
-	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskResponse, error)
+	RegisterAgent(context.Context, *RegisterAgentRequest) (*RegisterAgentResponse, error)
 }
 
 func RegisterVoskhodServer(s *grpc.Server, srv VoskhodServer) {
 	s.RegisterService(&_Voskhod_serviceDesc, srv)
 }
 
-func _Voskhod_CreateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateTaskRequest)
+func _Voskhod_RegisterAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterAgentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VoskhodServer).CreateTask(ctx, in)
+		return srv.(VoskhodServer).RegisterAgent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Voskhod/CreateTask",
+		FullMethod: "/proto.Voskhod/RegisterAgent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VoskhodServer).CreateTask(ctx, req.(*CreateTaskRequest))
+		return srv.(VoskhodServer).RegisterAgent(ctx, req.(*RegisterAgentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -236,15 +318,15 @@ var _Voskhod_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*VoskhodServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateTask",
-			Handler:    _Voskhod_CreateTask_Handler,
+			MethodName: "RegisterAgent",
+			Handler:    _Voskhod_RegisterAgent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "main.proto",
 }
 
-func (m *Task) Marshal() (dAtA []byte, err error) {
+func (m *Cluster) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -254,7 +336,7 @@ func (m *Task) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Task) MarshalTo(dAtA []byte) (int, error) {
+func (m *Cluster) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -265,13 +347,19 @@ func (m *Task) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintMain(dAtA, i, uint64(len(m.Uuid)))
 		i += copy(dAtA[i:], m.Uuid)
 	}
+	if len(m.Name) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintMain(dAtA, i, uint64(len(m.Name)))
+		i += copy(dAtA[i:], m.Name)
+	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
 
-func (m *CreateTaskRequest) Marshal() (dAtA []byte, err error) {
+func (m *Agent) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -281,16 +369,49 @@ func (m *CreateTaskRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *CreateTaskRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *Agent) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.Task != nil {
+	if len(m.Uuid) > 0 {
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintMain(dAtA, i, uint64(m.Task.Size()))
-		n1, err := m.Task.MarshalTo(dAtA[i:])
+		i = encodeVarintMain(dAtA, i, uint64(len(m.Uuid)))
+		i += copy(dAtA[i:], m.Uuid)
+	}
+	if len(m.Name) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintMain(dAtA, i, uint64(len(m.Name)))
+		i += copy(dAtA[i:], m.Name)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *RegisterAgentRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RegisterAgentRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Agent != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintMain(dAtA, i, uint64(m.Agent.Size()))
+		n1, err := m.Agent.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
@@ -302,7 +423,7 @@ func (m *CreateTaskRequest) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *CreateTaskResponse) Marshal() (dAtA []byte, err error) {
+func (m *RegisterAgentResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -312,16 +433,16 @@ func (m *CreateTaskResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *CreateTaskResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *RegisterAgentResponse) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.Task != nil {
+	if m.Cluster != nil {
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintMain(dAtA, i, uint64(m.Task.Size()))
-		n2, err := m.Task.MarshalTo(dAtA[i:])
+		i = encodeVarintMain(dAtA, i, uint64(m.Cluster.Size()))
+		n2, err := m.Cluster.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
@@ -342,7 +463,7 @@ func encodeVarintMain(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return offset + 1
 }
-func (m *Task) Size() (n int) {
+func (m *Cluster) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -352,20 +473,8 @@ func (m *Task) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMain(uint64(l))
 	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *CreateTaskRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Task != nil {
-		l = m.Task.Size()
+	l = len(m.Name)
+	if l > 0 {
 		n += 1 + l + sovMain(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
@@ -374,14 +483,50 @@ func (m *CreateTaskRequest) Size() (n int) {
 	return n
 }
 
-func (m *CreateTaskResponse) Size() (n int) {
+func (m *Agent) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.Task != nil {
-		l = m.Task.Size()
+	l = len(m.Uuid)
+	if l > 0 {
+		n += 1 + l + sovMain(uint64(l))
+	}
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovMain(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *RegisterAgentRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Agent != nil {
+		l = m.Agent.Size()
+		n += 1 + l + sovMain(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *RegisterAgentResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Cluster != nil {
+		l = m.Cluster.Size()
 		n += 1 + l + sovMain(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
@@ -403,7 +548,7 @@ func sovMain(x uint64) (n int) {
 func sozMain(x uint64) (n int) {
 	return sovMain(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *Task) Unmarshal(dAtA []byte) error {
+func (m *Cluster) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -426,10 +571,10 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: Task: wiretype end group for non-group")
+			return fmt.Errorf("proto: Cluster: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Task: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: Cluster: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -461,6 +606,35 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 			}
 			m.Uuid = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMain
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMain
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMain(dAtA[iNdEx:])
@@ -483,7 +657,7 @@ func (m *Task) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *CreateTaskRequest) Unmarshal(dAtA []byte) error {
+func (m *Agent) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -506,15 +680,124 @@ func (m *CreateTaskRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: CreateTaskRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: Agent: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: CreateTaskRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: Agent: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Task", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Uuid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMain
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMain
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Uuid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMain
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMain
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMain(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMain
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RegisterAgentRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMain
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RegisterAgentRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RegisterAgentRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Agent", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -538,10 +821,10 @@ func (m *CreateTaskRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Task == nil {
-				m.Task = &Task{}
+			if m.Agent == nil {
+				m.Agent = &Agent{}
 			}
-			if err := m.Task.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Agent.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -567,7 +850,7 @@ func (m *CreateTaskRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *CreateTaskResponse) Unmarshal(dAtA []byte) error {
+func (m *RegisterAgentResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -590,15 +873,15 @@ func (m *CreateTaskResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: CreateTaskResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: RegisterAgentResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: CreateTaskResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: RegisterAgentResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Task", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Cluster", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -622,10 +905,10 @@ func (m *CreateTaskResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Task == nil {
-				m.Task = &Task{}
+			if m.Cluster == nil {
+				m.Cluster = &Cluster{}
 			}
-			if err := m.Task.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Cluster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -756,19 +1039,22 @@ var (
 	ErrIntOverflowMain   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("main.proto", fileDescriptor_main_bac18eb8b6bc6694) }
+func init() { proto.RegisterFile("main.proto", fileDescriptor_main_75965fec24b48c52) }
 
-var fileDescriptor_main_bac18eb8b6bc6694 = []byte{
-	// 172 bytes of a gzipped FileDescriptorProto
+var fileDescriptor_main_75965fec24b48c52 = []byte{
+	// 211 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xca, 0x4d, 0xcc, 0xcc,
-	0xd3, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53, 0x4a, 0x52, 0x5c, 0x2c, 0x21, 0x89,
-	0xc5, 0xd9, 0x42, 0x42, 0x5c, 0x2c, 0xa5, 0xa5, 0x99, 0x29, 0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0x9c,
-	0x41, 0x60, 0xb6, 0x92, 0x09, 0x97, 0xa0, 0x73, 0x51, 0x6a, 0x62, 0x49, 0x2a, 0x48, 0x45, 0x50,
-	0x6a, 0x61, 0x69, 0x6a, 0x71, 0x89, 0x90, 0x3c, 0x17, 0x4b, 0x49, 0x62, 0x71, 0x36, 0x58, 0x21,
-	0xb7, 0x11, 0x37, 0xc4, 0x34, 0x3d, 0xb0, 0x0a, 0xb0, 0x84, 0x92, 0x29, 0x97, 0x10, 0xb2, 0xae,
-	0xe2, 0x82, 0xfc, 0xbc, 0xe2, 0x54, 0x82, 0xda, 0x8c, 0x7c, 0xb8, 0xd8, 0xc3, 0xf2, 0x8b, 0xb3,
-	0x33, 0xf2, 0x53, 0x84, 0x1c, 0xb9, 0xb8, 0x10, 0x26, 0x08, 0x49, 0x40, 0xd5, 0x62, 0x38, 0x45,
-	0x4a, 0x12, 0x8b, 0x0c, 0xc4, 0x3a, 0x27, 0x81, 0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63,
-	0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc6, 0x63, 0x39, 0x86, 0x24, 0x36, 0xb0, 0x5a, 0x63, 0x40, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x02, 0x32, 0xc5, 0x1b, 0x04, 0x01, 0x00, 0x00,
+	0xd3, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53, 0x4a, 0x86, 0x5c, 0xec, 0xce, 0x39,
+	0xa5, 0xc5, 0x25, 0xa9, 0x45, 0x42, 0x42, 0x5c, 0x2c, 0xa5, 0xa5, 0x99, 0x29, 0x12, 0x8c, 0x0a,
+	0x8c, 0x1a, 0x9c, 0x41, 0x60, 0x36, 0x48, 0x2c, 0x2f, 0x31, 0x37, 0x55, 0x82, 0x09, 0x22, 0x06,
+	0x62, 0x2b, 0xe9, 0x73, 0xb1, 0x3a, 0xa6, 0xa7, 0xe6, 0x95, 0x10, 0xad, 0xc1, 0x8a, 0x4b, 0x24,
+	0x28, 0x35, 0x3d, 0x13, 0x64, 0x09, 0x58, 0x63, 0x50, 0x6a, 0x61, 0x69, 0x6a, 0x71, 0x89, 0x90,
+	0x12, 0x17, 0x6b, 0x22, 0x88, 0x0f, 0x36, 0x80, 0xdb, 0x88, 0x07, 0xe2, 0x32, 0x3d, 0x88, 0x1a,
+	0x88, 0x94, 0x92, 0x23, 0x97, 0x28, 0x9a, 0xde, 0xe2, 0x82, 0xfc, 0xbc, 0xe2, 0x54, 0x21, 0x0d,
+	0x2e, 0xf6, 0x64, 0x88, 0xc3, 0xa1, 0xda, 0xf9, 0xa0, 0xda, 0xa1, 0xde, 0x09, 0x82, 0x49, 0x1b,
+	0x85, 0x72, 0xb1, 0x87, 0xe5, 0x17, 0x67, 0x67, 0xe4, 0xa7, 0x08, 0x79, 0x71, 0xf1, 0xa2, 0x98,
+	0x26, 0x24, 0x0d, 0xd5, 0x84, 0xcd, 0x7d, 0x52, 0x32, 0xd8, 0x25, 0x21, 0x0e, 0x70, 0x12, 0x38,
+	0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x67, 0x3c, 0x96, 0x63,
+	0x48, 0x62, 0x03, 0x2b, 0x37, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0x3e, 0x9c, 0x0b, 0xd8, 0x67,
+	0x01, 0x00, 0x00,
 }

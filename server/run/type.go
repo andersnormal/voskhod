@@ -25,6 +25,7 @@ import (
 	"sync"
 
 	"github.com/katallaxie/voskhod/server/config"
+	"google.golang.org/grpc"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -35,14 +36,16 @@ type Signal int
 // Server describes the interface to a Voskhod Agent
 type Server interface {
 	// Start does all things necessary to start an agent
-	Start() func() error
+	Start(ctx context.Context) func() error
 	// Stop is doing all things necessary to nicely stop an agent
-	Stop() error
+	Stop(ctx context.Context) func()
 }
 
 type server struct {
 	cfg *config.Config
-	ctx context.Context
+
+	// track the grpc server
+	grpc *grpc.Server
 
 	logger *log.Entry
 

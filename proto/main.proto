@@ -2,18 +2,131 @@ syntax = "proto3";
 
 package proto;
 
+// import "google/protobuf/timestamp.proto";
+
 service Voskhod {
-  rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse);
+  rpc RegisterAgent (RegisterAgentRequest) returns (RegisterAgentResponse);
+  // rpc SubscribeAgent (stream SubscribeAgentRequest) returns (stream SubscribeAgentResponse);
+  // rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse);
 }
 
-message Task {
+// these are the messages types which travel between
+// the agent and the server. There is no gRPC involved.
+
+// Cluster is representing a set of agents with resources
+//
+// A cluster is a logical collection of agents.
+message Cluster {
+  // The unique identifier of a cluster.
+  // It has to be unique to cluster resources accordingly,
+  // and transport offers and ACKs.
   string uuid = 1;
+
+  // The canonical name of a cluster.
+  string name = 2;
 }
 
-message CreateTaskRequest {
-  Task task = 1;
+// Agent is representing an agent to scheduler
+//
+// This is the identification of an agent to the scheduler.
+// It contains all the information about an agent.
+message Agent {
+  // Unique id of the agent.
+  // Which is either generated or provided.
+  string uuid = 1;
+
+  // A canonical name for the agent.
+  string name = 2;
 }
 
-message CreateTaskResponse {
-  Task task = 1;
+// Request message for RegisterAgent
+message RegisterAgentRequest {
+  // The agent which wants to register.
+  Agent agent = 1;
 }
+
+// Response message for RegisterAgent
+message RegisterAgentResponse {
+  // The cluster the agent is register to.
+  Cluster cluster = 1;
+}
+
+// subject to change
+
+// message SubscribeAgentRequest {
+//   // Transmits the agent that tries to subscribe
+//   Agent agent = 1;
+// }
+
+// // `Offer` defines a resource offer from an agent to the scheduler.
+// //
+// // This represents a resource offer by the agent to the server.
+// // It describes the resources available at the client.
+// // This is published to the offers topic at the server.
+// message Offer {
+
+//   // message DiskInfo {
+
+//   //   message {
+//   //     // A unique ID for the persistent disk volume
+//   //     required string id = 1;
+//   //   }
+//   // }
+
+//   // Describes a resource from a resource provider perspective.
+//   message Resource {
+//     // Type desribes the available resource types
+//     enum Type {
+//       CPU = 0;
+//       MEM = 1;
+//     }
+
+//     Type type = 1;
+
+//   }
+
+//   // A client timestamp of the message send
+//   google.protobuf.Timestamp sent = 1;
+
+//   // Resources that are offered by the agent to the server.
+//   repeated Resource resoures = 2;
+// }
+
+// // `Resource` defines a resource
+// //
+// // This represents a resource offer by the agent to the server.
+// // It describes the resources available at the client.
+// // This is published to the offers topic at the server.
+// message Resource {
+
+//   // A client timestamp of the message send
+//   google.protobuf.Timestamp sent = 1;
+// }
+
+// // Defines an event 
+// message TaskEvent {
+//   enum Type {
+//     CREATE_TASK = 0;
+//     DELETE_TASK = 1;
+//     UPDATE_TASK = 2;
+//   }
+
+//   string id = 1;
+// }
+
+// message Task {
+//   string uuid = 1;
+// }
+
+// message SubscribeAgentResponse {
+//   Task task = 1;
+//   Agent agent = 2;
+// }
+
+// message CreateTaskRequest {
+//   Task task = 1;
+// }
+
+// message CreateTaskResponse {
+//   Task task = 1;
+// }

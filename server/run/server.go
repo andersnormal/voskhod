@@ -30,78 +30,66 @@ import (
 
 	pb "github.com/katallaxie/voskhod/proto"
 	log "github.com/sirupsen/logrus"
+
+	grpcServer "github.com/katallaxie/voskhod/server/grpc"
 )
 
 var _ Server = (*server)(nil)
 
 // New is returning a new agent
-func New(ctx context.Context, cfg *config.Config) Server {
+func New(cfg *config.Config) Server {
 	return &server{
 		cfg: cfg,
-		ctx: ctx,
 	}
 }
 
 // Start is starting the agent
-func (s *server) Start() func() error {
+func (s *server) Start(ctx context.Context) func() error {
 	// set custom logger for the agent itself
 	s.logger = log.WithFields(log.Fields{})
 
 	return func() error {
 		var err error
 
-		lis, err := net.Listen("tcp", ":50051")
+		// creates a new gGRPC server
+		s.grpc = grpc.NewServer()
+		pb.RegisterVoskhodServer(s.grpc, grpcServer.New())
+
+		// creates a new listener
+		lis, err := net.Listen("tcp", s.cfg.GrpcAddr)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
-		s := grpc.NewServer()
-		pb.RegisterVoskhodServer(s, &server{})
+
+		// start couratin
+		go s.Stop(ctx)()
 
 		// Register reflection service on gRPC server.
-		reflection.Register(s)
-		if err := s.Serve(lis); err != nil {
+		reflection.Register(s.grpc)
+		if err := s.grpc.Serve(lis); err != nil {
 			log.Fatalf("failed to serve: %v", err)
 		}
-
-		// a.dc = dc // assign the client to the agent
-		// a.events = e.New(dc.ContainerEvents(a.ctx))
-
-		// // generating a event listener channel
-		// l := make(chan events.Message)
-		// a.events.AddEventListener(l)
-
-		// // go to func to golem
-		// go func() {
-		// 	for {
-		// 		msg := <-l
-		// 		a.handleMessage(msg) // handle the event message, and translate to our events
-		// 	}
-		// }()
-
-		// init hearbeat for docker client,
-		// because we do not know if the client still live
-
-		// a.logger.Infof(fmt.Sprintf("Agent succesfully started ..."))
-
-		// // just have one channel to end it,\
-		// // so not using something differne
-		// <-a.ctx.Done()
-
-		// cleanup
-		// err = a.Stop()
 
 		// noop
 		return err
 	}
 }
 
-// Stop is actually stopping the agent and tearing down everything.
+// Stop is actually stopping the server and tearing down everything.
 // Cleaning up the mess.
-func (s *server) Stop() error {
-	var err error
-	return err
+func (s *server) Stop(ctx context.Context) func() {
+	return func() {
+		defer s.grpc.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			}
+		}
+	}
 }
 
-func (s *server) CreateTask(ctx context.Context, in *pb.CreateTaskRequest) (*pb.CreateTaskResponse, error) {
-	return &pb.CreateTaskResponse{Task: &pb.Task{Uuid: "test"}}, nil
-}
+// func (s *server) CreateTask(ctx context.Context, in *pb.CreateTaskRequest) (*pb.CreateTaskResponse, error) {
+// 	return &pb.CreateTaskResponse{Task: &pb.Task{Uuid: "test"}}, nil
+// }

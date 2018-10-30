@@ -6,6 +6,8 @@
 
 This is a general purpose container scheduling agent for Docker. It subscribes to a central service an schedules containers on demand an keeps up to date with the state of the resources. It is not that you have multiple clusters, but you have resource projects/apps that you schedule to your resources. These resource can be cross-regional and cross-provider.
 
+What it does it subscribes agents to an offer queue. And it sends out messages to clients to schedule 
+
 > [task](https://github.com/go-task/task) is required to run all commands.
 
 ## Getting Started

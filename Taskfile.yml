@@ -39,7 +39,7 @@ tasks:
     cmds:
       - mkdir -p bin/gen
       - mkdir -p bin/cli
-      - protoc --gofast_out=plugins=grpc:./proto --cobra_out=plugins=client:./bin/cli --proto_path=proto --cobra_out=bin/cli proto/*.proto
+      - protoc --gofast_out=plugins=grpc:./proto --cobra_out=plugins=client:./proto --proto_path=proto proto/*.proto
 
   test:
     desc: Run all the go tests.

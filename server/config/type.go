@@ -47,9 +47,6 @@ type Config struct {
 	// Timeout of the runtime
 	Timeout time.Duration
 
-	// DockerReservedPort of engine port
-	DockerReservedPort int
-
-	// DockerReservedSSLPort is the default SSL port for the Docker engine
-	DockerReservedSSLPort int
+	// GrpcAddr of the server
+	GrpcAddr string
 }
