@@ -13,4 +13,10 @@ func addFlags(cmd *cobra.Command, cfg *config.Config) {
 
 	// timeout for client operations
 	cmd.Flags().DurationVar(&cfg.Timeout, "timeout", config.DefaultTimeout*time.Second, "timeout")
+
+	// Host to listen on
+	cmd.Flags().StringVar(&cfg.Host, "host", config.DefaultHost, "host")
+
+	// API Port
+	cmd.Flags().IntVar(&cfg.APIPort, "api-port", config.DefaultAPIPort, "api port")
 }

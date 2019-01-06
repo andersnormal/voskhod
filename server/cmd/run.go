@@ -4,11 +4,11 @@ import (
 	"context"
 	"os"
 
+	"github.com/katallaxie/voskhod/server/nats"
 	server "github.com/katallaxie/voskhod/server/run"
-	"github.com/spf13/cobra"
-	"golang.org/x/sync/errgroup"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 func runE(cmd *cobra.Command, args []string) error {
@@ -28,21 +28,22 @@ func runE(cmd *cobra.Command, args []string) error {
 	// watch syscalls and cancel upon need
 	go root.watchSignals(cfg)
 
-	// create errgroup
-	g, ctx := errgroup.WithContext(root.ctx)
-
 	// log
 	root.logger.Info("Starting Server ...")
 
+	// create nats
+	nats := nats.New(cfg)
+
 	// create agent and start
-	server := server.New(cfg)
-	g.Go(server.Start(ctx))
+	server := server.New(root.ctx, cfg)
+
+	// start the API
+	server.ServeAPI()
+	// start the Nats
+	server.ServeNats(nats)
 
 	// wait for errors
-	err = g.Wait()
-
-	// again, wait exit
-	<-root.exit
+	err = server.Wait()
 
 	// noop
 	return err

@@ -7,8 +7,6 @@ import (
 	"github.com/katallaxie/voskhod/server/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -20,9 +18,7 @@ var RootCmd = &cobra.Command{
 	Use:   "voskhod",
 	Short: "Distributed scheduler",
 	Long:  `Not yet`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	RunE: runE,
+	RunE:  runE,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -49,14 +45,6 @@ func init() {
 func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// Log as JSON instead of the default ASCII formatter.
-	log.SetFormatter(&log.JSONFormatter{})
-
-	// Only log the warning severity or above.
-	log.SetLevel(cfg.LogLevel)
-
-	// if we should output verbose
-	if cfg.Verbose {
-		log.SetLevel(log.InfoLevel)
-	}
+	// setup the logging behavior
+	setupLog(cfg)
 }

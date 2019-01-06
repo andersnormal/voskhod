@@ -12,6 +12,9 @@ type Config struct {
 	// Verbose toggles the verbosity
 	Verbose bool
 
+	// LogFormat is the format of the logger to use
+	LogFormat string
+
 	// LogLevel is the level with with to log for this config
 	LogLevel log.Level
 
@@ -27,6 +30,9 @@ type Config struct {
 	// Timeout of the runtime
 	Timeout time.Duration
 
-	// GrpcAddr of the server
-	GrpcAddr string
+	// Host is the host to listen on
+	Host string
+
+	// APIPort is the port for API
+	APIPort int
 }

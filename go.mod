@@ -1,6 +1,7 @@
 module github.com/katallaxie/voskhod
 
 require (
+	github.com/andersnormal/outlaw v1.0.0-beta.0 // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/docker/distribution v2.6.2+incompatible // indirect
@@ -8,6 +9,7 @@ require (
 	github.com/docker/go-connections v0.4.0
 	github.com/docker/go-units v0.3.3 // indirect
 	github.com/fiorix/protoc-gen-cobra v0.0.0-20181029091941-dffa0bfa45cc
+	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/gogo/protobuf v1.2.0 // indirect
 	github.com/golang/protobuf v1.2.0
 	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect
@@ -15,6 +17,7 @@ require (
 	github.com/hashicorp/raft v1.0.0 // indirect
 	github.com/katallaxie/mallard v0.0.0-20180821171636-fc40a8820195
 	github.com/kelseyhightower/envconfig v1.3.0
+	github.com/lib/pq v1.0.0 // indirect
 	github.com/nats-io/gnatsd v1.3.0
 	github.com/nats-io/go-nats v1.6.0
 	github.com/nats-io/go-nats-streaming v0.4.0 // indirect

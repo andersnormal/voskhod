@@ -1,27 +1,6 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-package stream
+package nats
 
 import (
-	"log"
 	"time"
 
 	natsd "github.com/nats-io/gnatsd/server"
@@ -35,7 +14,7 @@ const (
 )
 
 // Start is starting the queue
-func (s *Stream) Start() func() error {
+func (s *server) Start() func() error {
 	return func() error {
 		var err error
 
@@ -49,7 +28,7 @@ func (s *Stream) Start() func() error {
 			return NewError("could not start Nats server in %s seconds", defaultNatsReadyTimeout)
 		}
 
-		log.Print("Started nats server")
+		s.log().Infof("Started nats server")
 
 		// Get NATS Streaming Server default options
 		opts := stand.GetDefaultOptions()
@@ -75,21 +54,15 @@ func (s *Stream) Start() func() error {
 			return err
 		}
 
-		// wait for the server
+		// wait for the server to be ready
 		time.Sleep(2500 * time.Millisecond)
 
-		for {
-			select {
-			case <-s.ctx.Done():
-				s.Stop()
-				return err
-			default:
-			}
-		}
+		// noop
+		return nil
 	}
 }
 
-func (s *Stream) startNatsd(nopts *natsd.Options) *natsd.Server {
+func (s *server) startNatsd(nopts *natsd.Options) *natsd.Server {
 
 	// Create the NATS Server
 	ns := natsd.New(nopts)
