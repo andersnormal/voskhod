@@ -28,6 +28,7 @@ func (s *server) Start() func() error {
 			return NewError("could not start Nats server in %s seconds", defaultNatsReadyTimeout)
 		}
 
+		// verbose
 		s.log().Infof("Started nats server")
 
 		// Get NATS Streaming Server default options
@@ -63,7 +64,6 @@ func (s *server) Start() func() error {
 }
 
 func (s *server) startNatsd(nopts *natsd.Options) *natsd.Server {
-
 	// Create the NATS Server
 	ns := natsd.New(nopts)
 

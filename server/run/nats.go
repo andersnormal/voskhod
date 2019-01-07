@@ -4,6 +4,7 @@ import (
 	"github.com/katallaxie/voskhod/server/nats"
 )
 
+// ServeNats is starting NATs in the errgroup
 func (s *server) ServeNats(n nats.Server) {
 	g := s.errG
 

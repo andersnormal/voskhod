@@ -1,55 +1,92 @@
 package registry
 
 import (
+	"encoding/json"
 	"sync"
 
 	"github.com/nats-io/go-nats"
-
-	pb "github.com/katallaxie/voskhod/proto"
 )
 
-func (a *agentRegistry) register(agent *pb.Agent) error {
-	var err error
+const (
+	RegisterAction = "register"
+)
 
-	conn, err := a.getConn()
+func New(opts ...Option) Registry {
+	var n = new(registry)
+
+	configure(n, opts...)
+
+	return n
+}
+
+func (r *registry) Init(opts ...Option) error {
+	return configure(r, opts...)
+}
+
+func (r *registry) Options() Options {
+	return r.opts
+}
+
+func (r *registry) Registry(a *Agent, opts ...AgentOption) error {
+
+	b, err := json.Marshal(&Message{Action: RegisterAction, Agent: a})
 	if err != nil {
 		return err
 	}
 
-	a.Lock()
-	defer a.Unlock()
-
-	a.agents[agent.Uuid] = addAgent(a.agents[agent.Uuid], []*registry.)
+	return nil
 }
 
-func (a *agentRegistry) Register(agent *pb.Agent, opts ...registry.RegisterOptions) error {
-
-}
-
-func (a *agentRegistry) newConn() (*nats.Conn, error) {
-	opts := a.opts
-	opts.Server = a.addrs
-	opts.Secure = a.opts.Secure
-	opts.TLSConfig = a.opts.TLSConfig
-
-	return opts.Connect()
-}
-
-func (a *agentRegistry) getConn() (*nats.Conn, error) {
-	var err error
-
-	a.Lock()
-	defer a.Unlock()
-
-	if a.conn != nil {
-		return a.conn, nil
+func configure(r *registry, opts ...Option) error {
+	for _, o := range opts {
+		o(&r.opts)
 	}
 
-	c, err := a.newConn()
-	if err := nil {
-		return nil, err
-	}
-	a.conn = c
-
-	return a.conn, err
+	return nil
 }
+
+// func (r *registry) register(agent *pb.Agent) error {
+// 	var err error
+
+// 	conn, err := a.getConn()
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	a.Lock()
+// 	defer a.Unlock()
+
+// 	r.agents[agent.Uuid] = addAgent(r.agents[agent.Uuid], []*registry.)
+// }
+
+// func (r *registry) Register(agent *pb.Agent, opts ...registry.RegisterOptions) error {
+
+// }
+
+// func (r *registry) newConn() (*nats.Conn, error) {
+// 	opts := a.opts
+// 	opts.Server = r.addrs
+// 	opts.Secure = r.opts.Secure
+// 	opts.TLSConfig = r.opts.TLSConfig
+
+// 	return opts.Connect()
+// }
+
+// func (r *registry) getConn() (*nats.Conn, error) {
+// 	var err error
+
+// 	r.Lock()
+// 	defer r.Unlock()
+
+// 	if r.conn != nil {
+// 		return r.conn, nil
+// 	}
+
+// 	c, err := r.newConn()
+// 	if err := nil {
+// 		return nil, err
+// 	}
+// 	r.conn = c
+
+// 	return r.conn, err
+// }
