@@ -2,6 +2,7 @@ package registry
 
 import (
 	"context"
+	"crypto/tls"
 	"sync"
 	"time"
 
@@ -12,9 +13,13 @@ import (
 
 type Registry interface {
 	// Options returns the configured options
-	Options() Options
+	Options() *Options
 	// Init allows to init with new options
 	Init(opts ...Option) error
+	// Register allows to register an agent
+	Register(a *Agent, opts ...AgentOption) error
+	// Deregister allows to deregister an agent
+	Deregister(a *Agent) error
 }
 
 type Agent struct {
@@ -37,12 +42,13 @@ type registry struct {
 	queryTopic string // this should reflect back to the cluster
 	watchTopic string
 
+	nopts nats.Options
+	opts  *Options
+
 	sync.RWMutex
 	conn      *nats.Conn
 	agents    map[string][]*pb.Agent
 	listeners map[string]chan bool
-
-	opts Options
 }
 
 type Options struct {
@@ -50,4 +56,10 @@ type Options struct {
 	// Other options for implementations of the interface
 	// can be stored in a context
 	Context context.Context
+	// Secure
+	Secure bool
+	// TLSConfig
+	TLSConfig *tls.Config
+	// NATS Addresses
+	Addrs []string
 }

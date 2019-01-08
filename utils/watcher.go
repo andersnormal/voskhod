@@ -16,16 +16,18 @@ type Watcher interface {
 	Stop()
 }
 
-type Opts struct {
+type WatchOpts struct {
 	Timeout time.Duration
 }
 
+type WatchOpt func(*WatchOpts)
+
 type watcher struct {
 	sub  *nats.Subscription
-	opts *Opts
+	opts *WatchOpts
 }
 
-func NewWatcher(opts *Opts, sub *nats.Subscription) Watcher {
+func NewWatcher(opts *WatchOpts, sub *nats.Subscription) Watcher {
 	var w = new(watcher)
 	w.opts = opts
 	w.sub = sub
