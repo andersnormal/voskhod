@@ -9,6 +9,7 @@ import (
 	"github.com/nats-io/go-nats"
 
 	pb "github.com/katallaxie/voskhod/proto"
+	"github.com/katallaxie/voskhod/utils"
 )
 
 type Registry interface {
@@ -20,9 +21,12 @@ type Registry interface {
 	Register(a *Agent, opts ...AgentOption) error
 	// Deregister allows to deregister an agent
 	Deregister(a *Agent) error
+	// Watch updates to the registry
+	Watch(opts ...utils.WatchOpt) (utils.Watcher, error)
 }
 
 type Agent struct {
+	Name string
 }
 
 type AgentOptions struct {

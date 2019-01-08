@@ -2,9 +2,12 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/katallaxie/voskhod/server/nats"
+	"github.com/katallaxie/voskhod/server/registry"
 	server "github.com/katallaxie/voskhod/server/run"
 
 	log "github.com/sirupsen/logrus"
@@ -41,6 +44,31 @@ func runE(cmd *cobra.Command, args []string) error {
 	server.ServeAPI()
 	// start the Nats
 	server.ServeNats(nats)
+
+	// opts := []registry.Option{func(opts *registry.Options) { opts.Addrs = []string{"nats://localhost:4223"} }}
+	// agents := registry.New(opts...)
+
+	// go func() error {
+	// 	w, err := agents.Watch()
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	for {
+	// 		fmt.Println("test")
+
+	// 		msg, err := w.Next()
+	// 		if err != nil {
+	// 			return err
+	// 		}
+	// 		fmt.Println(msg)
+	// 	}
+	// }()
+
+	// // wait for the server to be ready
+	// time.Sleep(2500 * time.Millisecond)
+
+	// agents.Register(&registry.Agent{Name: "test"})
 
 	// wait for errors
 	err = server.Wait()
