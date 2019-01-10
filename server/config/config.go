@@ -30,6 +30,9 @@ const (
 	// DefaultVerbose is the default verbosity.
 	DefaultVerbose = false
 
+	// DefaultTracing is the default trace.
+	DefaultTracing = false
+
 	// DefaultTimeout is the default time to configure the runtime
 	DefaultTimeout = 60
 
@@ -44,6 +47,7 @@ const (
 func New() *Config {
 	return &Config{
 		Verbose:      DefaultVerbose,
+		Tracing:      DefaultTracing,
 		LogLevel:     DefaultLogLevel,
 		LogFormat:    DefaultLogFormat,
 		ReloadSignal: DefaultReloadSignal,

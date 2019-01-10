@@ -9,7 +9,10 @@ import (
 
 func addFlags(cmd *cobra.Command, cfg *config.Config) {
 	// enable verbose output
-	cmd.Flags().BoolVar(&cfg.Verbose, "verbose", config.DefaultVerbose, "enable verbose output")
+	cmd.Flags().BoolVar(&cfg.Verbose, "verbose", config.DefaultVerbose, "enable verbose")
+
+	// enable tracing output
+	cmd.Flags().BoolVar(&cfg.Tracing, "tracing", config.DefaultVerbose, "enable tracing")
 
 	// timeout for client operations
 	cmd.Flags().DurationVar(&cfg.Timeout, "timeout", config.DefaultTimeout*time.Second, "timeout")

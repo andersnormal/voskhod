@@ -12,6 +12,9 @@ type Config struct {
 	// Verbose toggles the verbosity
 	Verbose bool
 
+	// Tracing toggles the tracing
+	Tracing bool
+
 	// LogFormat is the format of the logger to use
 	LogFormat string
 
