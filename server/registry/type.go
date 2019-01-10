@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/nats-io/go-nats"
+	stan "github.com/nats-io/go-nats-streaming"
 
 	pb "github.com/katallaxie/voskhod/proto"
-	"github.com/katallaxie/voskhod/utils"
 )
 
 type Registry interface {
@@ -22,7 +22,7 @@ type Registry interface {
 	// Deregister allows to deregister an agent
 	Deregister(a *Agent) error
 	// Watch updates to the registry
-	Watch(opts ...utils.WatchOpt) (utils.Watcher, error)
+	Watch(cb stan.MsgHandler) (stan.Subscription, error)
 }
 
 type Agent struct {
@@ -43,6 +43,8 @@ type Option func(*Options)
 
 type registry struct {
 	addrs      []string
+	clusterID  string
+	clientID   string
 	queryTopic string // this should reflect back to the cluster
 	watchTopic string
 
@@ -50,20 +52,25 @@ type registry struct {
 	opts  *Options
 
 	sync.RWMutex
-	conn      *nats.Conn
+	conn      stan.Conn
 	agents    map[string][]*pb.Agent
 	listeners map[string]chan bool
 }
 
 type Options struct {
+	// Nats servers
+	Addrs []string
+	// Timeout for retry
 	TTL time.Duration
 	// Other options for implementations of the interface
 	// can be stored in a context
 	Context context.Context
+	// TLS Config
+	TLSConfig *tls.Config
 	// Secure
 	Secure bool
-	// TLSConfig
-	TLSConfig *tls.Config
-	// NATS Addresses
-	Addrs []string
+	// ClusterID
+	ClusterID string
+	// CllientID
+	ClientID string
 }

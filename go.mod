@@ -20,15 +20,16 @@ require (
 	github.com/lib/pq v1.0.0 // indirect
 	github.com/nats-io/gnatsd v1.3.0
 	github.com/nats-io/go-nats v1.6.0
-	github.com/nats-io/go-nats-streaming v0.4.0 // indirect
+	github.com/nats-io/go-nats-streaming v0.4.0
 	github.com/nats-io/nats-streaming-server v0.11.2
 	github.com/nats-io/nuid v1.0.0 // indirect
 	github.com/pkg/errors v0.8.0 // indirect
+	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.1.1
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.2
 	github.com/spf13/viper v1.2.1
-	golang.org/x/net v0.0.0-20181023162649-9b4f9f5ad519
+	golang.org/x/net v0.0.0-20190110044637-be1c187aa6c6
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
 	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f
 	google.golang.org/grpc v1.16.0

@@ -2,11 +2,12 @@ package registry
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
-	"github.com/katallaxie/voskhod/utils"
-
 	"github.com/nats-io/go-nats"
+	stan "github.com/nats-io/go-nats-streaming"
+	"github.com/satori/go.uuid"
 )
 
 const (
@@ -15,12 +16,14 @@ const (
 )
 
 const (
+	defaultClusterID  = "voskhod"
+	defaultNATSURL    = "nats://localhost:4222"
 	defaultWatchTopic = "voskhod.registry.watch"
 )
 
 func New(opts ...Option) Registry {
 	options := &Options{
-		TTL: time.Millisecond * 100,
+		TTL: time.Second * 25,
 	}
 
 	var n = new(registry)
@@ -67,41 +70,46 @@ func (r *registry) Deregister(a *Agent) error {
 	return conn.Publish(r.watchTopic, msg)
 }
 
-func (r *registry) Watch(opts ...utils.WatchOpt) (utils.Watcher, error) {
+func (r *registry) Watch(cb stan.MsgHandler) (stan.Subscription, error) {
 	conn, err := r.getConn()
 	if err != nil {
 		return nil, err
 	}
 
-	sub, err := conn.SubscribeSync(r.watchTopic)
-	if err != nil {
-		return nil, err
-	}
-
-	wo := &utils.WatchOpts{}
-	for _, o := range opts {
-		o(wo)
-	}
-
-	w := utils.NewWatcher(wo, sub)
-
-	return w, nil
+	return conn.Subscribe(r.watchTopic, cb, stan.DeliverAllAvailable())
 }
 
-func (r *registry) newConn() (*nats.Conn, error) {
+func (r *registry) newConn() (stan.Conn, error) {
 	opts := r.nopts
-	opts.Servers = r.addrs
 	opts.Secure = r.opts.Secure
 	opts.TLSConfig = r.opts.TLSConfig
 
+	clusterID := r.clusterID
+	clientID := r.clientID
+	if r.clientID == "" {
+		clientID = uuid.NewV4().String()
+	}
+
+	// security
 	if opts.TLSConfig != nil {
 		opts.Secure = true
 	}
 
-	return opts.Connect()
+	nc, err := opts.Connect()
+	if err != nil {
+		return nil, err
+	}
+
+	// more options
+	sc, err := stan.Connect(clusterID, clientID, stan.NatsConn(nc))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return sc, err
 }
 
-func (r *registry) getConn() (*nats.Conn, error) {
+func (r *registry) getConn() (stan.Conn, error) {
 	r.Lock()
 	defer r.Unlock()
 
@@ -124,19 +132,30 @@ func configure(r *registry, opts ...Option) error {
 		o(r.opts)
 	}
 
-	nopts := nats.GetDefaultOptions()
+	// mixin default opts
+	nopts := nats.DefaultOptions
 
 	watchTopic := defaultWatchTopic
 
+	if r.opts.ClusterID == "" {
+		r.opts.ClusterID = defaultClusterID
+	}
+
 	if len(r.opts.Addrs) == 0 {
 		r.opts.Addrs = nopts.Servers
+	}
+
+	if !r.opts.Secure {
+		r.opts.Secure = nopts.Secure
 	}
 
 	if r.opts.TLSConfig == nil {
 		r.opts.TLSConfig = nopts.TLSConfig
 	}
 
-	r.addrs = r.opts.Addrs
+	r.clientID = r.opts.ClientID
+	r.clusterID = r.opts.ClusterID
+
 	r.nopts = nopts
 	r.watchTopic = watchTopic
 
