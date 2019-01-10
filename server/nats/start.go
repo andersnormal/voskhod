@@ -3,14 +3,18 @@ package nats
 import (
 	"time"
 
+	"github.com/katallaxie/voskhod/logger"
+
 	natsd "github.com/nats-io/gnatsd/server"
 	stand "github.com/nats-io/nats-streaming-server/server"
 	"github.com/nats-io/nats-streaming-server/stores"
 )
 
 const (
+	defaultStartTimeout     = 2500 * time.Millisecond
 	defaultNatsReadyTimeout = 10
 	defaultNatsFilestoreDir = "data"
+	defaultClusterID        = "voskhod"
 )
 
 // Start is starting the queue
@@ -19,7 +23,7 @@ func (s *server) Start() func() error {
 		var err error
 
 		nopts := &natsd.Options{}
-		nopts.HTTPPort = defaultNatsHTTPPort
+		nopts.HTTPPort = 8223
 		nopts.Port = defaultNatsPort
 		nopts.NoSigs = true
 
@@ -29,25 +33,30 @@ func (s *server) Start() func() error {
 		}
 
 		// verbose
-		s.log().Infof("Started nats server")
+		s.log().Infof("Started NATS server")
 
 		// Get NATS Streaming Server default options
 		opts := stand.GetDefaultOptions()
 		opts.StoreType = stores.TypeFile
 		opts.FilestoreDir = defaultNatsFilestoreDir
+		opts.ID = defaultClusterID
 
-		// Point to the NATS Server with host/port used above
-		opts.NATSServerURL = "nats://localhost:4223"
+		// set custom logger
+		logger := logger.New()
+		logger.SetLogger(s.log())
+		opts.CustomLogger = logger
 
 		// Do not handle signals
 		opts.HandleSignals = false
+		opts.EnableLogging = true
+		opts.Debug = s.cfg.Verbose
+		opts.Trace = s.cfg.Tracing
 
 		// Now we want to setup the monitoring port for NATS Streaming.
 		// We still need NATS Options to do so, so create NATS Options
 		// using the NewNATSOptions() from the streaming server package.
 		snopts := stand.NewNATSOptions()
 		snopts.HTTPPort = 8222
-		snopts.NoSigs = true
 
 		// Now run the server with the streaming and streaming/nats options.
 		s.ss, err = stand.RunServerWithOpts(opts, snopts)
@@ -55,8 +64,11 @@ func (s *server) Start() func() error {
 			return err
 		}
 
+		// verbose
+		s.log().Infof("Started cluster %s", s.ss.ClusterID())
+
 		// wait for the server to be ready
-		time.Sleep(2500 * time.Millisecond)
+		time.Sleep(defaultNatsReadyTimeout)
 
 		// noop
 		return nil
