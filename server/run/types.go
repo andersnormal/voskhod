@@ -46,6 +46,12 @@ type server struct {
 
 	// mutex
 	sync.RWMutex
+
+	// ready channel for routines
+	ready chan interface{}
+
+	// events to be made
+	readyEvents []interface{}
 }
 
 type API struct {
