@@ -38,4 +38,7 @@ type Config struct {
 
 	// APIPort is the port for API
 	APIPort int
+
+	// ReadyTimeout is the timeout for the  server to become  ready
+	ReadyTimeout time.Duration
 }

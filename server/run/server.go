@@ -6,6 +6,7 @@ import (
 
 	"github.com/katallaxie/voskhod/server/config"
 
+	"github.com/andersnormal/pkg"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
@@ -21,9 +22,15 @@ func New(ctx context.Context, cfg *config.Config) Server {
 		errCtx: gtx,
 		errG:   g,
 		logger: log.WithFields(log.Fields{}),
+		ready:  pkg.NewReadyEvents(cfg.ReadyTimeout),
 	}
 
 	return s
+}
+
+// Ready is returning the wait signal for the server to be ready
+func (s *server) Ready() error {
+	return s.ready.Wait()
 }
 
 // Wait is returning the wait signal of the underlying errgroup

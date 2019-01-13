@@ -46,6 +46,12 @@ func runE(cmd *cobra.Command, args []string) error {
 	// start the Nats
 	server.ServeNats(nats)
 
+	// wait server to be ready
+	err = server.Ready()
+	if err != nil {
+		root.logger.Fatal("not ready")
+	}
+
 	opts := []registry.Option{}
 	agents := registry.New(opts...)
 

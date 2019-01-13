@@ -18,7 +18,7 @@ const (
 )
 
 // Start is starting the queue
-func (s *server) Start() func() error {
+func (s *server) Start(ready func()) func() error {
 	return func() error {
 		var err error
 
@@ -69,6 +69,8 @@ func (s *server) Start() func() error {
 
 		// wait for the server to be ready
 		time.Sleep(defaultNatsReadyTimeout)
+
+		ready()
 
 		// noop
 		return nil

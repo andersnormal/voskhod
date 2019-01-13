@@ -14,7 +14,8 @@ func (s *server) ServeNats(n nats.Server) {
 }
 
 func (s *server) serveNats() func() error {
-	return s.nats.Start()
+	s.ready.Register(&NatsReady{})
+	return s.nats.Start(func() {})
 }
 
 func (s *server) shutdownNats() func() error {

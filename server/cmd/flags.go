@@ -22,4 +22,7 @@ func addFlags(cmd *cobra.Command, cfg *config.Config) {
 
 	// API Port
 	cmd.Flags().IntVar(&cfg.APIPort, "api-port", config.DefaultAPIPort, "api port")
+
+	//  Ready Timeout
+	cmd.Flags().DurationVar(&cfg.ReadyTimeout, "ready", config.DefaultReadyTimeout, "timeout for readyness")
 }

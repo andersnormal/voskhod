@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"syscall"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -41,6 +42,10 @@ const (
 
 	// DefaultAPIPort is the default port for API
 	DefaultAPIPort = 8888
+
+	// DefaultReadyTimeout is the default timeout for the server
+	// to become ready
+	DefaultReadyTimeout = time.Second * 60
 )
 
 // New returns a new Config
@@ -56,6 +61,7 @@ func New() *Config {
 		Timeout:      DefaultTimeout,
 		Host:         DefaultHost,
 		APIPort:      DefaultAPIPort,
+		ReadyTimeout: DefaultReadyTimeout,
 	}
 }
 
