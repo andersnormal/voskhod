@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/katallaxie/voskhod/server/config"
+	"github.com/katallaxie/voskhod/server/etcd"
 	"github.com/katallaxie/voskhod/server/nats"
 
 	"github.com/andersnormal/pkg"
@@ -22,6 +23,8 @@ type Server interface {
 	ServeAPI()
 	// ServeNATS is starting the NATs
 	ServeNats(s nats.Server)
+	// ServeEtcd is starting etcd
+	ServeEtcd(e etcd.Server)
 	// Ready is waiting for the server to be ready
 	Ready() error
 	// Wait is waiting for everything to end :-)
@@ -43,6 +46,9 @@ type server struct {
 
 	// NATs
 	nats nats.Server
+
+	// etcd
+	etcd etcd.Server
 
 	// logger instance
 	logger *log.Entry

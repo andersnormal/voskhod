@@ -54,6 +54,10 @@ func (s *server) Wait() error {
 				g.Go(s.shutdownNats())
 			}
 
+			if s.etcd != nil {
+				g.Go(s.shutdownEtcd())
+			}
+
 			return g.Wait()
 		}
 	}

@@ -2,15 +2,12 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"os"
-	"time"
 
+	"github.com/katallaxie/voskhod/server/etcd"
 	"github.com/katallaxie/voskhod/server/nats"
-	"github.com/katallaxie/voskhod/server/registry"
 	server "github.com/katallaxie/voskhod/server/run"
 
-	stan "github.com/nats-io/go-nats-streaming"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -38,6 +35,9 @@ func runE(cmd *cobra.Command, args []string) error {
 	// create nats
 	nats := nats.New(cfg)
 
+	// create etcd
+	etcd := etcd.New(cfg)
+
 	// create agent and start
 	server := server.New(root.ctx, cfg)
 
@@ -45,45 +45,8 @@ func runE(cmd *cobra.Command, args []string) error {
 	server.ServeAPI()
 	// start the Nats
 	server.ServeNats(nats)
-
-	// wait server to be ready
-	err = server.Ready()
-	if err != nil {
-		root.logger.Fatal("not ready")
-	}
-
-	opts := []registry.Option{}
-	agents := registry.New(opts...)
-
-	go func() error {
-		time.Sleep(2500 * time.Millisecond)
-
-		sub, err := agents.Watch(func(msg *stan.Msg) {
-			fmt.Println("ttest")
-			fmt.Println(msg)
-		})
-
-		if err != nil {
-			fmt.Println("here")
-			fmt.Println(err)
-
-			return err
-		}
-
-		fmt.Println("here2")
-
-		// wait for context
-		time.Sleep(time.Second * 3600)
-
-		sub.Close()
-
-		return err
-	}()
-
-	// wait for the server to be ready
-	time.Sleep(3500 * time.Millisecond)
-
-	agents.Register(&registry.Agent{Name: "test"})
+	// start etcd
+	server.ServeEtcd(etcd)
 
 	// wait for errors
 	err = server.Wait()
