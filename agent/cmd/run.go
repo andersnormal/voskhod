@@ -4,8 +4,8 @@ import (
 	"context"
 	"os"
 
-	agent "github.com/katallaxie/voskhod/agent/run"
-	"github.com/katallaxie/voskhod/agent/stream"
+	agent "github.com/andersnormal/voskhod/agent/run"
+	"github.com/andersnormal/voskhod/agent/stream"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 

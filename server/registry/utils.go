@@ -1,7 +1,7 @@
 package registry
 
 // import (
-// 	pb "github.com/katallaxie/voskhod/proto"
+// 	pb "github.com/andersnormal/voskhod/proto"
 // )
 
 // func addAgent(old, neu []*registry.Node) []*registry.Node {

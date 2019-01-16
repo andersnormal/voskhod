@@ -5,7 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/katallaxie/voskhod/agent/config"
+	"github.com/andersnormal/voskhod/agent/config"
 )
 
 func (r *root) configureSignals(cfg *config.Config) {

@@ -12,7 +12,7 @@ import (
 	"github.com/docker/docker/api/types"
 	dc "github.com/docker/docker/client"
 	"github.com/docker/go-connections/sockets"
-	"github.com/katallaxie/voskhod/agent/docker/dockeriface"
+	"github.com/andersnormal/voskhod/agent/docker/dockeriface"
 )
 
 var _ dockeriface.Client = (*client)(nil)

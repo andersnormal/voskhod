@@ -3,8 +3,8 @@ package cmd
 import (
 	"path"
 
-	"github.com/katallaxie/voskhod/server/config"
-	"github.com/katallaxie/voskhod/utils"
+	"github.com/andersnormal/voskhod/server/config"
+	"github.com/andersnormal/voskhod/utils"
 )
 
 func mkdirDataFolder(cfg *config.Config) error {

@@ -4,11 +4,10 @@ import (
 	"context"
 	"sync"
 
-	"github.com/katallaxie/voskhod/server/config"
-	"github.com/katallaxie/voskhod/server/etcd"
-	"github.com/katallaxie/voskhod/server/nats"
+	"github.com/andersnormal/voskhod/server/config"
+	"github.com/andersnormal/voskhod/server/etcd"
+	"github.com/andersnormal/voskhod/server/nats"
 
-	"github.com/andersnormal/pkg"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
@@ -55,9 +54,6 @@ type server struct {
 
 	// mutex
 	sync.RWMutex
-
-	// ready
-	ready pkg.ReadyEvents
 }
 
 type API struct {
@@ -66,12 +62,4 @@ type API struct {
 
 	// logger
 	logger *log.Entry
-}
-
-type APIReady struct {
-	*pkg.ReadyEvent
-}
-
-type NatsReady struct {
-	*pkg.ReadyEvent
 }

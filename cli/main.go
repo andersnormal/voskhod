@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	pb "github.com/katallaxie/voskhod/proto"
+	pb "github.com/andersnormal/voskhod/proto"
 )
 
 func init() {

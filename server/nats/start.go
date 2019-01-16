@@ -3,7 +3,7 @@ package nats
 import (
 	"time"
 
-	"github.com/katallaxie/voskhod/logger"
+	"github.com/andersnormal/voskhod/logger"
 
 	natsd "github.com/nats-io/gnatsd/server"
 	stand "github.com/nats-io/nats-streaming-server/server"

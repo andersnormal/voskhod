@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/katallaxie/voskhod/server/nats"
+	"github.com/andersnormal/voskhod/server/nats"
 )
 
 // ServeNats is starting NATs in the errgroup

@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	pb "github.com/katallaxie/voskhod/proto"
+	pb "github.com/andersnormal/voskhod/proto"
 )
 
 func New() *grpcServer {

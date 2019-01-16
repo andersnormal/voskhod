@@ -22,7 +22,7 @@ package stream
 import (
 	"context"
 
-	"github.com/katallaxie/voskhod/agent/config"
+	"github.com/andersnormal/voskhod/agent/config"
 )
 
 // New returns a new Stream

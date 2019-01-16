@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	pb "github.com/katallaxie/voskhod/proto"
+	pb "github.com/andersnormal/voskhod/proto"
 )
 
 var _ pb.VoskhodServer = (*grpcServer)(nil)

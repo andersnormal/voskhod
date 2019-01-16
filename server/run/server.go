@@ -5,9 +5,8 @@ import (
 	// "fmt"
 	"time"
 
-	"github.com/katallaxie/voskhod/server/config"
+	"github.com/andersnormal/voskhod/server/config"
 
-	"github.com/andersnormal/pkg"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 )
@@ -23,7 +22,6 @@ func New(ctx context.Context, cfg *config.Config) Server {
 		errCtx: gtx,
 		errG:   g,
 		logger: log.WithFields(log.Fields{}),
-		ready:  pkg.NewReadyEvents(cfg.ReadyTimeout),
 	}
 
 	return s

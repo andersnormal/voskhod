@@ -4,7 +4,7 @@ import (
 	"context"
 	"net"
 
-	pb "github.com/katallaxie/voskhod/proto"
+	pb "github.com/andersnormal/voskhod/proto"
 
 	"google.golang.org/grpc"
 )

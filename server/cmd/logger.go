@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/katallaxie/voskhod/server/config"
+	"github.com/andersnormal/voskhod/server/config"
 
 	log "github.com/sirupsen/logrus"
 )

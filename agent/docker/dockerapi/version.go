@@ -21,7 +21,7 @@
 package dockerclient
 
 import (
-	"github.com/katallaxie/voskhod/agent/docker"
+	"github.com/andersnormal/voskhod/agent/docker"
 )
 
 func FindSupportedAPIVersions() docker.APIVersions {

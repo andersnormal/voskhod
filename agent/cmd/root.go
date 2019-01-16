@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/katallaxie/voskhod/agent/config"
+	"github.com/andersnormal/voskhod/agent/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 

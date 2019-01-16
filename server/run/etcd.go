@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/katallaxie/voskhod/server/etcd"
+	"github.com/andersnormal/voskhod/server/etcd"
 )
 
 // ServeEtcd is starting etcd in the errgroup

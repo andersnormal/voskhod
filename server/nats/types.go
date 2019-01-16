@@ -1,7 +1,7 @@
 package nats
 
 import (
-	"github.com/katallaxie/voskhod/server/config"
+	"github.com/andersnormal/voskhod/server/config"
 
 	natsd "github.com/nats-io/gnatsd/server"
 	stand "github.com/nats-io/nats-streaming-server/server"

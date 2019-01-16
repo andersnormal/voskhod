@@ -4,9 +4,9 @@ import (
 	"context"
 	"os"
 
-	"github.com/katallaxie/voskhod/server/etcd"
-	"github.com/katallaxie/voskhod/server/nats"
-	server "github.com/katallaxie/voskhod/server/run"
+	"github.com/andersnormal/voskhod/server/etcd"
+	"github.com/andersnormal/voskhod/server/nats"
+	server "github.com/andersnormal/voskhod/server/run"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

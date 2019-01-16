@@ -3,8 +3,8 @@ package cmd
 import (
 	"time"
 
-	"github.com/katallaxie/voskhod/agent/config"
-	c "github.com/katallaxie/voskhod/config"
+	"github.com/andersnormal/voskhod/agent/config"
+	c "github.com/andersnormal/voskhod/config"
 	"github.com/spf13/cobra"
 )
 

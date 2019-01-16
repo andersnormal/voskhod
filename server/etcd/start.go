@@ -12,6 +12,7 @@ func (s *server) Start() func() error {
 
 		u, err := url.Parse("unix:///var/run/etcd")
 		if err != nil {
+			fmt.Println("test")
 			return err
 		}
 

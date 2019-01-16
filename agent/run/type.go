@@ -24,9 +24,9 @@ import (
 	"context"
 	"sync"
 
-	"github.com/katallaxie/voskhod/agent/config"
-	"github.com/katallaxie/voskhod/agent/docker/dockerapi"
-	"github.com/katallaxie/voskhod/agent/docker/events"
+	"github.com/andersnormal/voskhod/agent/config"
+	"github.com/andersnormal/voskhod/agent/docker/dockerapi"
+	"github.com/andersnormal/voskhod/agent/docker/events"
 
 	log "github.com/sirupsen/logrus"
 )

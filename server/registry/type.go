@@ -9,8 +9,13 @@ import (
 	"github.com/nats-io/go-nats"
 	stan "github.com/nats-io/go-nats-streaming"
 
-	pb "github.com/katallaxie/voskhod/proto"
+	pb "github.com/andersnormal/voskhod/proto"
 )
+
+type Watcher interface {
+	// Next ...
+	Next()
+}
 
 type Registry interface {
 	// Options returns the configured options
@@ -52,7 +57,8 @@ type registry struct {
 	opts  *Options
 
 	sync.RWMutex
-	conn      stan.Conn
+	conn stan.Conn
+
 	agents    map[string][]*pb.Agent
 	listeners map[string]chan bool
 }

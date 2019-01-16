@@ -23,7 +23,7 @@ package stream
 import (
 	"context"
 
-	"github.com/katallaxie/voskhod/agent/config"
+	"github.com/andersnormal/voskhod/agent/config"
 	natsd "github.com/nats-io/gnatsd/server"
 	stand "github.com/nats-io/nats-streaming-server/server"
 	log "github.com/sirupsen/logrus"
