@@ -41,4 +41,13 @@ type Config struct {
 
 	// ReadyTimeout is the timeout for the  server to become  ready
 	ReadyTimeout time.Duration
+
+	// DataDir is the directory for etcd
+	DataDir string
+
+	// EtcdDataDir is the directory for etcd
+	EtcdDataDir string
+
+	// NatsDataDir is the directory for Nats
+	NatsDataDir string
 }

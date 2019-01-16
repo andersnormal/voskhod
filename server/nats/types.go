@@ -10,7 +10,7 @@ import (
 
 type Server interface {
 	// Start is starting the server
-	Start(ready func()) func() error
+	Start() func() error
 	// Stop is stopping the server
 	Stop() func() error
 }

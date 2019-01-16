@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	// "fmt"
 	"time"
 
 	"github.com/katallaxie/voskhod/server/config"
@@ -35,13 +36,10 @@ func (s *server) Ready() error {
 
 // Wait is returning the wait signal of the underlying errgroup
 func (s *server) Wait() error {
-	ticker := time.NewTicker(1 * time.Second)
-
 	for {
 		select {
-		case <-ticker.C:
 		case <-s.errCtx.Done():
-			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 			defer cancel()
 
 			g, _ := errgroup.WithContext(ctx)
@@ -58,7 +56,11 @@ func (s *server) Wait() error {
 				g.Go(s.shutdownEtcd())
 			}
 
-			return g.Wait()
+			if err := g.Wait(); err != nil {
+				return err
+			}
+
+			return nil
 		}
 	}
 }

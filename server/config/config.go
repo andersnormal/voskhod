@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"path"
 	"syscall"
 	"time"
 
@@ -46,6 +47,15 @@ const (
 	// DefaultReadyTimeout is the default timeout for the server
 	// to become ready
 	DefaultReadyTimeout = time.Second * 60
+
+	// DefaultDataDir is the base dir for runtime data
+	DefaultDataDir = "data"
+
+	// DefaultEtcdDataDir is the default directory for etcd data
+	DefaultEtcdDataDir = "etcd"
+
+	// DefaultNatsDataDir is the default directory for nats data
+	DefaultNatsDataDir = "nats"
 )
 
 // New returns a new Config
@@ -62,7 +72,20 @@ func New() *Config {
 		Host:         DefaultHost,
 		APIPort:      DefaultAPIPort,
 		ReadyTimeout: DefaultReadyTimeout,
+		DataDir:      DefaultDataDir,
+		EtcdDataDir:  DefaultEtcdDataDir,
+		NatsDataDir:  DefaultNatsDataDir,
 	}
+}
+
+// NatsFilestoreDir returns the
+func (c *Config) NatsFilestoreDir() string {
+	return path.Join(c.DataDir, c.NatsDataDir)
+}
+
+// EtcdFilestoreDir returns the
+func (c *Config) EtcdFilestoreDir() string {
+	return path.Join(c.DataDir, c.EtcdDataDir)
 }
 
 // APIListener returns the listener for API

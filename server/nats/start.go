@@ -13,12 +13,11 @@ import (
 const (
 	defaultStartTimeout     = 2500 * time.Millisecond
 	defaultNatsReadyTimeout = 10
-	defaultNatsFilestoreDir = "data"
 	defaultClusterID        = "voskhod"
 )
 
 // Start is starting the queue
-func (s *server) Start(ready func()) func() error {
+func (s *server) Start() func() error {
 	return func() error {
 		var err error
 
@@ -38,7 +37,7 @@ func (s *server) Start(ready func()) func() error {
 		// Get NATS Streaming Server default options
 		opts := stand.GetDefaultOptions()
 		opts.StoreType = stores.TypeFile
-		opts.FilestoreDir = defaultNatsFilestoreDir
+		opts.FilestoreDir = s.cfg.NatsFilestoreDir()
 		opts.ID = defaultClusterID
 
 		// set custom logger
@@ -57,6 +56,7 @@ func (s *server) Start(ready func()) func() error {
 		// using the NewNATSOptions() from the streaming server package.
 		snopts := stand.NewNATSOptions()
 		snopts.HTTPPort = 8222
+		snopts.NoSigs = true
 
 		// Now run the server with the streaming and streaming/nats options.
 		s.ss, err = stand.RunServerWithOpts(opts, snopts)
@@ -69,8 +69,6 @@ func (s *server) Start(ready func()) func() error {
 
 		// wait for the server to be ready
 		time.Sleep(defaultNatsReadyTimeout)
-
-		ready()
 
 		// noop
 		return nil

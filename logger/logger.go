@@ -49,6 +49,12 @@ func (n *natsLogger) Noticef(format string, v ...interface{}) {
 	}, format, v...)
 }
 
+func (n *natsLogger) Warnf(format string, v ...interface{}) {
+	n.logFunc(func(log *log.Entry, format string, v ...interface{}) {
+		log.Warnf(format, v...)
+	}, format, v...)
+}
+
 func (n *natsLogger) Tracef(format string, v ...interface{}) {
 	n.logFunc(func(log *log.Entry, format string, v ...interface{}) {
 		return

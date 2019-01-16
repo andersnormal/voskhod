@@ -16,6 +16,11 @@ func runE(cmd *cobra.Command, args []string) error {
 	var err error
 	var root = new(root)
 
+	// setup folders
+	if err = mkdirDataFolder(cfg); err != nil {
+		return err
+	}
+
 	// init logger
 	root.logger = log.WithFields(log.Fields{})
 

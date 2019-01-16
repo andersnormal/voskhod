@@ -3,7 +3,11 @@ package etcd
 // Stop is stopping the queue
 func (s *server) Stop() func() error {
 	return func() error {
-		s.etcd.Close()
+		s.log().Info("shutting down etcd...")
+
+		if s.etcd != nil {
+			s.etcd.Close()
+		}
 
 		return nil
 	}
