@@ -2,60 +2,60 @@ package cmd
 
 import (
 	"context"
-	"os"
 
-	"github.com/andersnormal/voskhod/server/etcd"
 	"github.com/andersnormal/voskhod/server/nats"
-	server "github.com/andersnormal/voskhod/server/run"
 
+	"github.com/andersnormal/pkg/server"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 func runE(cmd *cobra.Command, args []string) error {
-	var err error
-	var root = new(root)
+	// create new root command
+	root := new(root)
 
 	// setup folders
-	if err = mkdirDataFolder(cfg); err != nil {
-		return err
-	}
+	// if err = mkdirDataFolder(cfg); err != nil {
+	// 	return err
+	// }
 
 	// init logger
-	root.logger = log.WithFields(log.Fields{})
+	root.logger = log.WithFields(log.Fields{
+		"verbose": cfg.Verbose,
+	})
 
-	// create sys channel
-	root.sys = make(chan os.Signal, 1)
-	root.exit = make(chan int, 1)
+	// create new root context
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	// create root context
-	root.ctx, root.cancel = context.WithCancel(context.Background())
-
-	// watch syscalls and cancel upon need
-	go root.watchSignals(cfg)
+	// create server
+	s := server.NewServer(ctx)
 
 	// log
-	root.logger.Info("Starting Server ...")
+	root.logger.Info("starting server...")
 
-	// create nats
+	// // create nats
 	nats := nats.New(cfg)
+	s.Listen(nats)
 
-	// create etcd
-	etcd := etcd.New(cfg)
+	// // create etcd
+	// etcd := etcd.New(cfg)
 
-	// create agent and start
-	server := server.New(root.ctx, cfg)
+	// // create agent and start
+	// server := server.New(root.ctx, cfg)
 
-	// start the API
-	server.ServeAPI()
-	// start the Nats
-	server.ServeNats(nats)
-	// start etcd
-	server.ServeEtcd(etcd)
+	// // start the API
+	// server.ServeAPI()
+	// // start the Nats
+	// server.ServeNats(nats)
+	// // start etcd
+	// server.ServeEtcd(etcd)
 
 	// wait for errors
-	err = server.Wait()
+	if err := s.Wait(); err != nil {
+		root.logger.Error(err)
+	}
 
 	// noop
-	return err
+	return nil
 }

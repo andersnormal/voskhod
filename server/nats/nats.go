@@ -1,14 +1,53 @@
 package nats
 
 import (
+	"context"
 	"time"
 
 	"github.com/andersnormal/voskhod/logger"
+	"github.com/andersnormal/voskhod/server/config"
 
 	natsd "github.com/nats-io/gnatsd/server"
 	stand "github.com/nats-io/nats-streaming-server/server"
 	"github.com/nats-io/nats-streaming-server/stores"
+
+	log "github.com/sirupsen/logrus"
 )
+
+const (
+	defaultNatsHTTPPort = 8223
+	defaultNatsPort     = 4223
+)
+
+// New returns a new server
+func New(cfg *config.Config, opts ...Opt) Nats {
+	options := new(Opts)
+
+	n := new(nats)
+	n.opts = options
+	n.cfg = cfg
+
+	n.logger = log.WithFields(log.Fields{})
+
+	configure(n, opts...)
+
+	return n
+}
+
+// Stop is stopping the queue
+func (n *nats) Stop() error {
+	n.log().Info("shutting down nats...")
+
+	if n.ss != nil {
+		n.ss.Shutdown()
+	}
+
+	if n.ns != nil {
+		n.ns.Shutdown()
+	}
+
+	return nil
+}
 
 const (
 	defaultStartTimeout     = 2500 * time.Millisecond
@@ -17,7 +56,7 @@ const (
 )
 
 // Start is starting the queue
-func (s *server) Start() func() error {
+func (n *nats) Start(ctx context.Context) func() error {
 	return func() error {
 		var err error
 
@@ -26,30 +65,30 @@ func (s *server) Start() func() error {
 		nopts.Port = defaultNatsPort
 		nopts.NoSigs = true
 
-		s.ns = s.startNatsd(nopts) // wait for the Nats server to come available
-		if !s.ns.ReadyForConnections(defaultNatsReadyTimeout * time.Second) {
+		n.ns = n.startNatsd(nopts) // wait for the Nats server to come available
+		if !n.ns.ReadyForConnections(defaultNatsReadyTimeout * time.Second) {
 			return NewError("could not start Nats server in %s seconds", defaultNatsReadyTimeout)
 		}
 
 		// verbose
-		s.log().Infof("Started NATS server")
+		n.log().Infof("Started NATS server")
 
 		// Get NATS Streaming Server default options
 		opts := stand.GetDefaultOptions()
 		opts.StoreType = stores.TypeFile
-		opts.FilestoreDir = s.cfg.NatsFilestoreDir()
+		opts.FilestoreDir = n.cfg.NatsFilestoreDir()
 		opts.ID = defaultClusterID
 
 		// set custom logger
 		logger := logger.New()
-		logger.SetLogger(s.log())
+		logger.SetLogger(n.log())
 		opts.CustomLogger = logger
 
 		// Do not handle signals
 		opts.HandleSignals = false
 		opts.EnableLogging = true
-		opts.Debug = s.cfg.Verbose
-		opts.Trace = s.cfg.Tracing
+		opts.Debug = n.cfg.Verbose
+		opts.Trace = n.cfg.Tracing
 
 		// Now we want to setup the monitoring port for NATS Streaming.
 		// We still need NATS Options to do so, so create NATS Options
@@ -59,13 +98,13 @@ func (s *server) Start() func() error {
 		snopts.NoSigs = true
 
 		// Now run the server with the streaming and streaming/nats options.
-		s.ss, err = stand.RunServerWithOpts(opts, snopts)
+		n.ss, err = stand.RunServerWithOpts(opts, snopts)
 		if err != nil {
 			return err
 		}
 
 		// verbose
-		s.log().Infof("Started cluster %s", s.ss.ClusterID())
+		n.log().Infof("Started cluster %s", n.ss.ClusterID())
 
 		// wait for the server to be ready
 		time.Sleep(defaultNatsReadyTimeout)
@@ -75,7 +114,7 @@ func (s *server) Start() func() error {
 	}
 }
 
-func (s *server) startNatsd(nopts *natsd.Options) *natsd.Server {
+func (n *nats) startNatsd(nopts *natsd.Options) *natsd.Server {
 	// Create the NATS Server
 	ns := natsd.New(nopts)
 
@@ -83,4 +122,16 @@ func (s *server) startNatsd(nopts *natsd.Options) *natsd.Server {
 	go ns.Start()
 
 	return ns
+}
+
+func (n *nats) log() *log.Entry {
+	return n.logger
+}
+
+func configure(n *nats, opts ...Opt) error {
+	for _, o := range opts {
+		o(n.opts)
+	}
+
+	return nil
 }

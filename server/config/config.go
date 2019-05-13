@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path"
 	"syscall"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -44,15 +43,8 @@ const (
 	// DefaultAPIPort is the default port for API
 	DefaultAPIPort = 8888
 
-	// DefaultReadyTimeout is the default timeout for the server
-	// to become ready
-	DefaultReadyTimeout = time.Second * 60
-
 	// DefaultDataDir is the base dir for runtime data
 	DefaultDataDir = "data"
-
-	// DefaultEtcdDataDir is the default directory for etcd data
-	DefaultEtcdDataDir = "etcd"
 
 	// DefaultNatsDataDir is the default directory for nats data
 	DefaultNatsDataDir = "nats"
@@ -71,9 +63,7 @@ func New() *Config {
 		Timeout:      DefaultTimeout,
 		Host:         DefaultHost,
 		APIPort:      DefaultAPIPort,
-		ReadyTimeout: DefaultReadyTimeout,
 		DataDir:      DefaultDataDir,
-		EtcdDataDir:  DefaultEtcdDataDir,
 		NatsDataDir:  DefaultNatsDataDir,
 	}
 }
@@ -81,11 +71,6 @@ func New() *Config {
 // NatsFilestoreDir returns the
 func (c *Config) NatsFilestoreDir() string {
 	return path.Join(c.DataDir, c.NatsDataDir)
-}
-
-// EtcdFilestoreDir returns the
-func (c *Config) EtcdFilestoreDir() string {
-	return path.Join(c.DataDir, c.EtcdDataDir)
 }
 
 // APIListener returns the listener for API
