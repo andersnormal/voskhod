@@ -33,15 +33,6 @@ type Config struct {
 	// DockerReservedSSLPort is the default SSL port for the Docker engine
 	DockerReservedSSLPort int
 
-	// NatsReadyTimeout is the timeout to wait for NATS to become ready
-	NatsReadyTimeout time.Duration
-
-	// NatsFilestoreDir is the directory to persit NATS messages
-	NatsFilestoreDir string
-
-	// NatsHTTPPort is the http port that NATS is listening on
-	NatsHTTPPort int
-
-	// NatsPort is the port NATS is listing on
-	NatsPort int
+	// NatsAddr ...
+	NatsAddr string
 }

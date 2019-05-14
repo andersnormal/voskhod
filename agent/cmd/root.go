@@ -17,9 +17,7 @@ var (
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "voskhod",
-	Short: "A brief description of your application",
-	Long:  `Not yet`,
+	Use: "voskhod",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	RunE: runE,

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"time"
 
 	"github.com/andersnormal/voskhod/server/nats"
 
@@ -35,11 +36,12 @@ func runE(cmd *cobra.Command, args []string) error {
 	root.logger.Info("starting server...")
 
 	// // create nats
-	nats := nats.New(cfg)
+	nats := nats.New(
+		cfg,
+		nats.WithID("voskhod"),
+		nats.WithTimeout(2500*time.Millisecond),
+	)
 	s.Listen(nats)
-
-	// // create etcd
-	// etcd := etcd.New(cfg)
 
 	// // create agent and start
 	// server := server.New(root.ctx, cfg)

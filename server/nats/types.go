@@ -1,6 +1,8 @@
 package nats
 
 import (
+	"time"
+
 	"github.com/andersnormal/voskhod/server/config"
 
 	s "github.com/andersnormal/pkg/server"
@@ -29,4 +31,6 @@ type Opt func(*Opts)
 
 // Opts ...
 type Opts struct {
+	ID      string
+	Timeout time.Duration
 }

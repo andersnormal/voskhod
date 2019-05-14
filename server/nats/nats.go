@@ -34,6 +34,20 @@ func New(cfg *config.Config, opts ...Opt) Nats {
 	return n
 }
 
+// WithID ...
+func WithID(id string) func(o *Opts) {
+	return func(o *Opts) {
+		o.ID = id
+	}
+}
+
+// WithTimeout ...
+func WithTimeout(t time.Duration) func(o *Opts) {
+	return func(o *Opts) {
+		o.Timeout = t
+	}
+}
+
 // Stop is stopping the queue
 func (n *nats) Stop() error {
 	n.log().Info("shutting down nats...")
@@ -49,12 +63,6 @@ func (n *nats) Stop() error {
 	return nil
 }
 
-const (
-	defaultStartTimeout     = 2500 * time.Millisecond
-	defaultNatsReadyTimeout = 10
-	defaultClusterID        = "voskhod"
-)
-
 // Start is starting the queue
 func (n *nats) Start(ctx context.Context) func() error {
 	return func() error {
@@ -66,8 +74,8 @@ func (n *nats) Start(ctx context.Context) func() error {
 		nopts.NoSigs = true
 
 		n.ns = n.startNatsd(nopts) // wait for the Nats server to come available
-		if !n.ns.ReadyForConnections(defaultNatsReadyTimeout * time.Second) {
-			return NewError("could not start Nats server in %s seconds", defaultNatsReadyTimeout)
+		if !n.ns.ReadyForConnections(n.opts.Timeout * time.Second) {
+			return NewError("could not start Nats server in %s seconds", n.opts.Timeout)
 		}
 
 		// verbose
@@ -77,7 +85,7 @@ func (n *nats) Start(ctx context.Context) func() error {
 		opts := stand.GetDefaultOptions()
 		opts.StoreType = stores.TypeFile
 		opts.FilestoreDir = n.cfg.NatsFilestoreDir()
-		opts.ID = defaultClusterID
+		opts.ID = n.opts.ID
 
 		// set custom logger
 		logger := logger.New()
@@ -107,7 +115,7 @@ func (n *nats) Start(ctx context.Context) func() error {
 		n.log().Infof("Started cluster %s", n.ss.ClusterID())
 
 		// wait for the server to be ready
-		time.Sleep(defaultNatsReadyTimeout)
+		time.Sleep(n.opts.Timeout)
 
 		// noop
 		return nil
