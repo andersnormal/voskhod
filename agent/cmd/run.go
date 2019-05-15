@@ -4,10 +4,12 @@ import (
 	"context"
 
 	"github.com/andersnormal/pkg/server"
-	// agent "github.com/andersnormal/voskhod/agent/run"
-	"github.com/spf13/cobra"
+	"github.com/andersnormal/voskhod/agent/stream"
 
+	"github.com/nats-io/go-nats"
+	"github.com/nats-io/stan.go"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 func runE(cmd *cobra.Command, args []string) error {
@@ -29,9 +31,28 @@ func runE(cmd *cobra.Command, args []string) error {
 	// log
 	root.logger.Info("starting Agent ...")
 
-	// // create agent and start
-	// agent := agent.New(ctx, cfg)
-	// g.Go(agent.Start())
+	nc, err := nats.Connect(cfg.NatsAddr)
+	if err != nil {
+		return err
+	}
+
+	// Connect to a server
+	sc, err := stan.Connect("voskhod", "test", stan.NatsConn(nc))
+	if err != nil {
+		return err
+	}
+
+	// Simple Publisher
+	if err := sc.Publish("foo", []byte("Hello World")); err != nil {
+		return err
+	}
+
+	// create stream
+	ss := stream.New(
+		stream.WithConfig(cfg),
+		stream.WithNats(sc),
+	)
+	s.Listen(ss)
 
 	// wait for errors
 	if err := s.Wait(); err != nil {
