@@ -3,10 +3,11 @@ package stream
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/andersnormal/voskhod/agent/config"
+	pb "github.com/andersnormal/voskhod/proto"
 
+	"github.com/golang/protobuf/proto"
 	"github.com/nats-io/stan.go"
 )
 
@@ -16,7 +17,7 @@ func New(opts ...Opt) Stream {
 
 	s := new(stream)
 	s.opts = options
-	s.msg = make(chan *stan.Msg, 64)
+	s.done = make(chan error)
 
 	configure(s, opts...)
 
@@ -45,23 +46,34 @@ func (s *stream) Stop() error {
 // Start is starting the queue
 func (s *stream) Start(ctx context.Context) func() error {
 	return func() error {
-		// Simple Async Subscriber
-		sub, err := s.sc.Subscribe("foo", func(m *stan.Msg) {
-			fmt.Printf("Received a message: %s\n", string(m.Data))
-		}, stan.DeliverAllAvailable())
-
+		sub, err := s.sc.Subscribe("foo", s.handleMessage, stan.DurableName(s.cfg.Name), stan.MaxInflight(1))
 		if err != nil {
 			return err
 		}
 
-		time.Sleep(time.Minute * 5)
-
 		// Unsubscribe
-		sub.Unsubscribe() // Close connection
-		s.sc.Close()
+		defer sub.Unsubscribe() // Close connection
+		defer s.sc.Close()
 
-		return nil
+		// wait for something to end this
+		err = <-s.done
+
+		return err
 	}
+}
+
+// handleMessages ...
+func (s *stream) handleMessage(m *stan.Msg) {
+	event := new(pb.Event)
+	if err := proto.Unmarshal(m.Data, event); err != nil {
+		// todo: reply with error
+	}
+
+	// if err := m.Ack(); err != nil {
+	// 	fmt.Println(err)
+	// }
+
+	fmt.Printf("Received a message: %s\n", event.GetEvent())
 }
 
 func configure(s *stream, opts ...Opt) error {

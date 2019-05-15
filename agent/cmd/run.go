@@ -31,21 +31,19 @@ func runE(cmd *cobra.Command, args []string) error {
 	// log
 	root.logger.Info("starting Agent ...")
 
+	// connect to NATs
 	nc, err := nats.Connect(cfg.NatsAddr)
 	if err != nil {
 		return err
 	}
+	defer nc.Close()
 
 	// Connect to a server
-	sc, err := stan.Connect("voskhod", "test", stan.NatsConn(nc))
+	sc, err := stan.Connect(cfg.ClusterID, cfg.Name, stan.NatsConn(nc))
 	if err != nil {
 		return err
 	}
-
-	// Simple Publisher
-	if err := sc.Publish("foo", []byte("Hello World")); err != nil {
-		return err
-	}
+	defer sc.Close()
 
 	// create stream
 	ss := stream.New(

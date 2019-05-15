@@ -12,7 +12,7 @@ type Stream interface {
 }
 
 type stream struct {
-	msg chan *stan.Msg
+	done chan error
 
 	sc stan.Conn
 

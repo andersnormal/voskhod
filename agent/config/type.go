@@ -33,6 +33,12 @@ type Config struct {
 	// DockerReservedSSLPort is the default SSL port for the Docker engine
 	DockerReservedSSLPort int
 
+	// ClusterID
+	ClusterID string
+
 	// NatsAddr ...
 	NatsAddr string
+
+	// Name
+	Name string
 }

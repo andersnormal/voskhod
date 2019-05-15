@@ -14,6 +14,12 @@ func addFlags(cmd *cobra.Command, cfg *config.Config) {
 	// timeout for client operations
 	cmd.Flags().DurationVar(&cfg.Timeout, "timeout", config.DefaultTimeout*time.Second, "timeout")
 
+	// cluster id
+	cmd.Flags().StringVar(&cfg.ClusterID, "cluster", cfg.ClusterID, "cluster")
+
 	// nats addr
 	cmd.Flags().StringVar(&cfg.NatsAddr, "addr", cfg.NatsAddr, "address")
+
+	// name
+	cmd.Flags().StringVar(&cfg.Name, "name", cfg.Name, "name")
 }

@@ -2,6 +2,10 @@ version: 1
 author: Sebastian Döll <sebastian@andersnormal.us>
 project: voskhod
 tasks:
+  proto:
+    desc: building the proto
+    cmds:
+      - protoc --go_out=plugins=grpc:./proto --proto_path=proto proto/*.proto
   test:
     disable: true
     desc: test

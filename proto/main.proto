@@ -10,6 +10,16 @@ service Voskhod {
   // rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse);
 }
 
+message Event {
+  oneof event {
+    Reserve reserve = 1;
+  }
+}
+
+message Reserve {
+  uint64 memory = 1;
+}
+
 // these are the messages types which travel between
 // the agent and the server. There is no gRPC involved.
 
