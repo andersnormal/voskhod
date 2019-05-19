@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/andersnormal/voskhod/server/nats"
+	"github.com/andersnormal/voskhod/server/scheduler"
 
 	"github.com/andersnormal/pkg/server"
 	log "github.com/sirupsen/logrus"
@@ -44,7 +45,8 @@ func runE(cmd *cobra.Command, args []string) error {
 	s.Listen(nats)
 
 	// // create agent and start
-	// server := server.New(root.ctx, cfg)
+	sched := scheduler.New(nats)
+	s.Listen(sched)
 
 	// // start the API
 	// server.ServeAPI()

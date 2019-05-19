@@ -1,6 +1,7 @@
 package nats
 
 import (
+	"net"
 	"time"
 
 	"github.com/andersnormal/voskhod/server/config"
@@ -12,6 +13,9 @@ import (
 )
 
 type Nats interface {
+	ClusterID() string
+	Addr() net.Addr
+
 	s.Listener
 }
 

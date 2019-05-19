@@ -2,6 +2,7 @@ package nats
 
 import (
 	"context"
+	"net"
 	"time"
 
 	"github.com/andersnormal/voskhod/logger"
@@ -120,6 +121,16 @@ func (n *nats) Start(ctx context.Context) func() error {
 		// noop
 		return nil
 	}
+}
+
+// ClusterID ...
+func (n *nats) ClusterID() string {
+	return n.ss.ClusterID()
+}
+
+// Addr ...
+func (n *nats) Addr() net.Addr {
+	return n.ns.Addr()
 }
 
 func (n *nats) startNatsd(nopts *natsd.Options) *natsd.Server {
