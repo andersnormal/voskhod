@@ -67,9 +67,8 @@ func (n *nats) Stop() error {
 // Start is starting the queue
 func (n *nats) Start(ctx context.Context) func() error {
 	return func() error {
-		var err error
-
-		nopts := &natsd.Options{}
+		// creating NATS ...
+		nopts := new(natsd.Options)
 		nopts.HTTPPort = 8223
 		nopts.Port = defaultNatsPort
 		nopts.NoSigs = true
@@ -80,7 +79,7 @@ func (n *nats) Start(ctx context.Context) func() error {
 		}
 
 		// verbose
-		n.log().Infof("Started NATS server")
+		n.log().Infof("started NATS server")
 
 		// Get NATS Streaming Server default options
 		opts := stand.GetDefaultOptions()
@@ -107,13 +106,14 @@ func (n *nats) Start(ctx context.Context) func() error {
 		snopts.NoSigs = true
 
 		// Now run the server with the streaming and streaming/nats options.
-		n.ss, err = stand.RunServerWithOpts(opts, snopts)
+		ss, err := stand.RunServerWithOpts(opts, snopts)
 		if err != nil {
 			return err
 		}
+		n.ss = ss
 
 		// verbose
-		n.log().Infof("Started cluster %s", n.ss.ClusterID())
+		n.log().Infof("started cluster %s", n.ss.ClusterID())
 
 		// wait for the server to be ready
 		time.Sleep(n.opts.Timeout)
@@ -126,6 +126,11 @@ func (n *nats) Start(ctx context.Context) func() error {
 // ClusterID ...
 func (n *nats) ClusterID() string {
 	return n.ss.ClusterID()
+}
+
+// MonitorAddr ...
+func (n *nats) MonitorAddr() *net.TCPAddr {
+	return n.ns.MonitorAddr()
 }
 
 // Addr ...

@@ -13,8 +13,12 @@ import (
 )
 
 type Nats interface {
+	// ClusterID ...
 	ClusterID() string
+	// Addr ...
 	Addr() net.Addr
+	// MonitorAddr ...
+	MonitorAddr() *net.TCPAddr
 
 	s.Listener
 }

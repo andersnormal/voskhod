@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"context"
+	"net/url"
 	"time"
 
+	"github.com/andersnormal/voskhod/server/etcd"
 	"github.com/andersnormal/voskhod/server/nats"
 	"github.com/andersnormal/voskhod/server/scheduler"
 
@@ -43,6 +45,21 @@ func runE(cmd *cobra.Command, args []string) error {
 		nats.WithTimeout(2500*time.Millisecond),
 	)
 	s.Listen(nats)
+
+	u, err := url.Parse("http://localhost:2379")
+	if err != nil {
+		return err
+	}
+
+	// create embed etcd
+	e := etcd.New(
+		etcd.WithDir(cfg.DataDir),
+		etcd.WithLCUrls([]url.URL{*u}),
+	)
+	s.Listen(e)
+
+	// wait for etcd to become available
+	time.Sleep(5 * time.Second)
 
 	// // create agent and start
 	sched := scheduler.New(nats)
