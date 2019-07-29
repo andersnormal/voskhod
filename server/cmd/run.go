@@ -2,12 +2,9 @@ package cmd
 
 import (
 	"context"
-	"net/url"
 	"time"
 
-	"github.com/andersnormal/voskhod/server/etcd"
-	"github.com/andersnormal/voskhod/server/nats"
-	"github.com/andersnormal/voskhod/server/scheduler"
+	"github.com/andersnormal/voskhod/pkg/nats"
 
 	"github.com/andersnormal/pkg/server"
 	log "github.com/sirupsen/logrus"
@@ -17,11 +14,6 @@ import (
 func runE(cmd *cobra.Command, args []string) error {
 	// create new root command
 	root := new(root)
-
-	// setup folders
-	// if err = mkdirDataFolder(cfg); err != nil {
-	// 	return err
-	// }
 
 	// init logger
 	root.logger = log.WithFields(log.Fields{
@@ -38,32 +30,34 @@ func runE(cmd *cobra.Command, args []string) error {
 	// log
 	root.logger.Info("starting server...")
 
-	// // create nats
-	nats := nats.New(
-		cfg,
+	// create nats ... as singular instance right now
+	n := nats.New(
+		nats.WithDebug(),
+		nats.WithVerbose(),
+		nats.WithDataDir(cfg.NatsFilestoreDir()),
 		nats.WithID("voskhod"),
-		nats.WithTimeout(2500*time.Millisecond),
+		nats.WithTimeout(1*time.Millisecond),
 	)
-	s.Listen(nats)
+	s.Listen(n, true)
 
-	u, err := url.Parse("http://localhost:2379")
-	if err != nil {
-		return err
-	}
+	// u, err := url.Parse("http://localhost:2379")
+	// if err != nil {
+	// 	return err
+	// }
 
 	// create embed etcd
-	e := etcd.New(
-		etcd.WithDir(cfg.DataDir),
-		etcd.WithLCUrls([]url.URL{*u}),
-	)
-	s.Listen(e)
+	// e := etcd.New(
+	// 	etcd.WithDir(cfg.DataDir),
+	// 	etcd.WithLCUrls([]url.URL{*u}),
+	// )
+	// s.Listen(e, false)
 
-	// wait for etcd to become available
-	time.Sleep(5 * time.Second)
+	// // wait for etcd to become available
+	// time.Sleep(5 * time.Second)
 
 	// // create agent and start
-	sched := scheduler.New(nats)
-	s.Listen(sched)
+	// sched := scheduler.New(nats)
+	// s.Listen(sched, false)
 
 	// // start the API
 	// server.ServeAPI()

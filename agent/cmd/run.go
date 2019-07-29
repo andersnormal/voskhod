@@ -50,7 +50,7 @@ func runE(cmd *cobra.Command, args []string) error {
 		stream.WithConfig(cfg),
 		stream.WithNats(sc),
 	)
-	s.Listen(ss)
+	s.Listen(ss, false)
 
 	// wait for errors
 	if err := s.Wait(); err != nil {

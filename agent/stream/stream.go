@@ -44,7 +44,7 @@ func (s *stream) Stop() error {
 }
 
 // Start is starting the queue
-func (s *stream) Start(ctx context.Context) func() error {
+func (s *stream) Start(ctx context.Context, ready func()) func() error {
 	return func() error {
 		sub, err := s.sc.Subscribe("foo", s.handleMessage, stan.DurableName(s.cfg.Name), stan.MaxInflight(1))
 		if err != nil {
