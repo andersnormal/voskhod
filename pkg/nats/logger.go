@@ -14,10 +14,12 @@ type natsLogger struct {
 	sync.RWMutex
 }
 
+// NewLogger returns a new logger for Nats.
 func NewLogger() *natsLogger {
 	return &natsLogger{}
 }
 
+// SetLogger is setting a specific log.Entry for the logger.
 func (n *natsLogger) SetLogger(l *log.Entry) {
 	n.Lock()
 	defer n.Unlock()
@@ -57,7 +59,7 @@ func (n *natsLogger) Warnf(format string, v ...interface{}) {
 
 func (n *natsLogger) Tracef(format string, v ...interface{}) {
 	n.logFunc(func(log *log.Entry, format string, v ...interface{}) {
-		return
+		log.Tracef(format, v...)
 	}, format, v...)
 }
 

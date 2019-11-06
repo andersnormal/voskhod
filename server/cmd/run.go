@@ -11,62 +11,38 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func runE(cmd *cobra.Command, args []string) error {
-	// create new root command
+type root struct {
+	logger *log.Entry
+	nats   nats.Nats
+}
+
+func runE(c *cobra.Command, args []string) error {
+	// create a new root
 	root := new(root)
 
 	// init logger
 	root.logger = log.WithFields(log.Fields{
+		"debug":   cfg.Debug,
 		"verbose": cfg.Verbose,
 	})
 
-	// create new root context
+	// create root context
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// create server
-	s := server.NewServer(ctx)
+	s, ctx := server.WithContext(ctx)
 
-	// log
-	root.logger.Info("starting server...")
+	// NATS ...
+	if !cfg.Nats.Disabled {
+		root.nats = nats.New(cfg, nats.Timeout(5*time.Second))
 
-	// create nats ... as singular instance right now
-	n := nats.New(
-		nats.WithDebug(),
-		nats.WithVerbose(),
-		nats.WithDataDir(cfg.NatsFilestoreDir()),
-		nats.WithID("voskhod"),
-		nats.WithTimeout(1*time.Millisecond),
-	)
-	s.Listen(n, true)
+		// create Nats
+		s.Listen(root.nats, true)
+	}
 
-	// u, err := url.Parse("http://localhost:2379")
-	// if err != nil {
-	// 	return err
-	// }
-
-	// create embed etcd
-	// e := etcd.New(
-	// 	etcd.WithDir(cfg.DataDir),
-	// 	etcd.WithLCUrls([]url.URL{*u}),
-	// )
-	// s.Listen(e, false)
-
-	// // wait for etcd to become available
-	// time.Sleep(5 * time.Second)
-
-	// // create agent and start
-	// sched := scheduler.New(nats)
-	// s.Listen(sched, false)
-
-	// // start the API
-	// server.ServeAPI()
-	// // start the Nats
-	// server.ServeNats(nats)
-	// // start etcd
-	// server.ServeEtcd(etcd)
-
-	// wait for errors
+	// listen for the server and wait for it to fail,
+	// or for sys interrupts
 	if err := s.Wait(); err != nil {
 		root.logger.Error(err)
 	}

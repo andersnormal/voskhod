@@ -5,6 +5,8 @@ import (
 	"net"
 	"time"
 
+	"github.com/andersnormal/voskhod/pkg/config"
+
 	s "github.com/andersnormal/pkg/server"
 	natsd "github.com/nats-io/gnatsd/server"
 	stand "github.com/nats-io/nats-streaming-server/server"
@@ -12,13 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	defaultNatsHTTPPort          = 8223
-	defaultNatsPort              = 4223
-	defaultNatsStreamingHTTPPort = 8222
-	defaultNatsStreamingPort     = 4222
-)
-
+// Nats ...
 type Nats interface {
 	// ClusterID ...
 	ClusterID() string
@@ -26,6 +22,8 @@ type Nats interface {
 	Addr() net.Addr
 	// MonitorAddr ...
 	MonitorAddr() *net.TCPAddr
+	// Ready ...
+	Ready() <-chan struct{}
 
 	s.Listener
 }
@@ -34,7 +32,10 @@ type nats struct {
 	ns *natsd.Server
 	ss *stand.StanServer
 
+	ready chan struct{}
+
 	opts *Opts
+	cfg  *config.Config
 
 	// logger instance
 	logger *log.Entry
@@ -45,24 +46,17 @@ type Opt func(*Opts)
 
 // Opts ...
 type Opts struct {
-	ID      string
 	Timeout time.Duration
-	Verbose bool
-	Debug   bool
-	Dir     string
-
-	Clustered bool
-	NodeID    string
-	Bootstrap bool
-	Peers     []string
 }
 
 // New returns a new server
-func New(opts ...Opt) Nats {
+func New(cfg *config.Config, opts ...Opt) Nats {
 	options := new(Opts)
 
 	n := new(nats)
 	n.opts = options
+	n.cfg = cfg
+	n.ready = make(chan struct{})
 
 	n.logger = log.WithFields(log.Fields{})
 
@@ -71,112 +65,63 @@ func New(opts ...Opt) Nats {
 	return n
 }
 
-// WithID ...
-func WithID(id string) func(o *Opts) {
-	return func(o *Opts) {
-		o.ID = id
-	}
-}
-
-// WithTimeout ...
-func WithTimeout(t time.Duration) func(o *Opts) {
+// Timeout ...
+func Timeout(t time.Duration) func(o *Opts) {
 	return func(o *Opts) {
 		o.Timeout = t
 	}
 }
 
-// WithDataDir ...
-func WithDataDir(dir string) func(o *Opts) {
-	return func(o *Opts) {
-		o.Dir = dir
-	}
-}
-
-// WithDebug ...
-func WithDebug() func(o *Opts) {
-	return func(o *Opts) {
-		o.Debug = true
-	}
-}
-
-// WithVerbose ...
-func WithVerbose() func(o *Opts) {
-	return func(o *Opts) {
-		o.Verbose = true
-	}
-}
-
-// WithClustering ...
-func WithClustering(id string, bootstrap bool, peers []string) func(o *Opts) {
-	return func(o *Opts) {
-		o.Clustered = true
-		o.Peers = peers
-		o.Bootstrap = bootstrap
-		o.NodeID = id
-	}
-}
-
-// Stop is stopping the queue
-func (n *nats) Stop() error {
-	n.log().Info("shutting down nats...")
-
-	if n.ss != nil {
-		n.ss.Shutdown()
-	}
-
-	if n.ns != nil {
-		n.ns.Shutdown()
-	}
-
-	return nil
-}
-
 // Start is starting the queue
 func (n *nats) Start(ctx context.Context, ready func()) func() error {
 	return func() error {
+		defer func() { ready() }()
+
+		// create logger ...
+		logger := NewLogger()
+		logger.SetLogger(n.logger)
+
 		// creating NATS ...
 		nopts := new(natsd.Options)
-		nopts.HTTPPort = defaultNatsHTTPPort
-		nopts.Port = defaultNatsPort
+		nopts.HTTPPort = n.cfg.Nats.HTTPPort
+		nopts.Port = n.cfg.Nats.Port
 		nopts.NoSigs = true
 
-		n.ns = n.startNatsd(nopts) // wait for the Nats server to come available
-		if !n.ns.ReadyForConnections(n.opts.Timeout * time.Second) {
+		n.ns = n.startNatsd(nopts, logger) // wait for the Nats server to come available
+		if !n.ns.ReadyForConnections(n.opts.Timeout) {
 			return NewError("could not start Nats server in %s seconds", n.opts.Timeout)
 		}
-
-		// verbose
-		n.log().Infof("started NATS server")
 
 		// Get NATS Streaming Server default options
 		opts := stand.GetDefaultOptions()
 		opts.StoreType = stores.TypeFile
-		opts.FilestoreDir = n.opts.Dir
-		opts.ID = n.opts.ID
+		opts.FilestoreDir = n.cfg.NatsFilestoreDir()
+		opts.ID = n.cfg.Nats.ClusterID
 
 		// set custom logger
-		logger := NewLogger()
-		logger.SetLogger(n.log())
 		opts.CustomLogger = logger
 
 		// Do not handle signals
 		opts.HandleSignals = false
 		opts.EnableLogging = true
-		opts.Debug = n.opts.Debug
-		opts.Trace = n.opts.Verbose
+		opts.Debug = n.cfg.Debug
+		opts.Trace = n.cfg.Debug
 
 		// clustering mode
-		opts.Clustering.Clustered = n.opts.Clustered
-		opts.Clustering.Bootstrap = n.opts.Bootstrap
-		opts.Clustering.NodeID = n.opts.NodeID
-		opts.Clustering.Peers = n.opts.Peers
+		opts.Clustering.Clustered = n.cfg.Nats.Clustering
+		opts.Clustering.Bootstrap = n.cfg.Nats.Bootstrap
+		opts.Clustering.NodeID = n.cfg.Nats.ClusterNodeID
+		opts.Clustering.Peers = n.cfg.Nats.ClusterPeers
+		opts.Clustering.LogCacheSize = stand.DefaultLogCacheSize
+		opts.Clustering.LogSnapshots = stand.DefaultLogSnapshots
+		opts.Clustering.RaftLogPath = n.cfg.RaftLogPath()
+		opts.NATSServerURL = n.cfg.Nats.ClusterURL
 
 		// Now we want to setup the monitoring port for NATS Streaming.
 		// We still need NATS Options to do so, so create NATS Options
 		// using the NewNATSOptions() from the streaming server package.
 		snopts := stand.NewNATSOptions()
-		snopts.Port = defaultNatsStreamingPort
-		snopts.HTTPPort = defaultNatsStreamingHTTPPort
+		snopts.HTTPPort = 8222
 		snopts.NoSigs = true
 
 		// Now run the server with the streaming and streaming/nats options.
@@ -186,14 +131,14 @@ func (n *nats) Start(ctx context.Context, ready func()) func() error {
 		}
 		n.ss = ss
 
-		// verbose
-		n.log().Infof("started cluster %s", n.ss.ClusterID())
+		close(n.ready)
 
-		// wait for the server to be ready
-		time.Sleep(n.opts.Timeout)
-
-		// call to be ready
 		ready()
+
+		<-ctx.Done()
+
+		n.ss.Shutdown()
+		n.ns.Shutdown()
 
 		// noop
 		return nil
@@ -215,18 +160,20 @@ func (n *nats) Addr() net.Addr {
 	return n.ns.Addr()
 }
 
-func (n *nats) startNatsd(nopts *natsd.Options) *natsd.Server {
+// Ready ...
+func (n *nats) Ready() <-chan struct{} {
+	return n.ready
+}
+
+func (n *nats) startNatsd(nopts *natsd.Options, l natsd.Logger) *natsd.Server {
 	// Create the NATS Server
 	ns := natsd.New(nopts)
+	ns.SetLogger(l, n.cfg.Debug, n.cfg.Debug)
 
 	// Start it as a go routine
 	go ns.Start()
 
 	return ns
-}
-
-func (n *nats) log() *log.Entry {
-	return n.logger
 }
 
 func configure(n *nats, opts ...Opt) error {
